@@ -1,0 +1,31 @@
+#!/bin/sh -xe
+
+build_dir="tooltime_lin"
+
+if [ -d "$build_dir" ]; then
+  birth_epoch="$(stat -c %W "$build_dir")"
+  if [ "$birth_epoch" -lt 0 ]; then
+    echo "Failed to read creation time for '$build_dir' (stat birth time unsupported)." >&2
+    exit 1
+  fi
+
+  suffix="$(date -d "@$birth_epoch" +%Y-%m-%d--%H-%M-%S)"
+  archived_dir="${build_dir}--${suffix}"
+
+  if [ -e "$archived_dir" ]; then
+    echo "Refusing to overwrite existing archive directory '$archived_dir'." >&2
+    exit 1
+  fi
+
+  mv "$build_dir" "$archived_dir"
+fi
+
+mkdir "$build_dir"
+cd "tooltime_lin"
+cmake \
+  -DCMAKE_BUILD_TYPE="Debug" \
+  -DENABLE_OPENMP="ON" \
+  -DENABLE_SANITIZERS="ON" \
+  ..
+make -j$(nproc) VERBOSE=1
+make test_solvespace
