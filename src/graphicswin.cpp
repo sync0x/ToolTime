@@ -42,7 +42,7 @@ struct MenuEntry {
 const MenuEntry Menu[] = {
 //lv label                              cmd                        accel    kind
 { 0, N_("A&uto"),                       Command::NONE,             0,       KN, NULL   },
-{ 1, N_("Save && Export"),              Command::AUTO_SAVE_EXPORT, 0,       KN, mAuto  },
+{ 1, N_("Save && &Export"),             Command::AUTO_SAVE_EXPORT, C|A|'a', KN, mAuto  },
 { 1, N_("Load / Import"),               Command::AUTO_LOAD_IMPORT, 0,       KN, mAuto  },
 { 1,  NULL,                             Command::NONE,             0,       KN, NULL   },
 { 1, N_("JavaScript"),                  Command::AUTO_JAVASCRIPT,  0,       KN, mAuto  },
