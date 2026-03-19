@@ -669,7 +669,92 @@ void SolveSpaceUI::UpdateWindowTitles() {
 
 void SolveSpaceUI::MenuAuto(Command id) {
     switch(id) {
-        case Command::AUTO_SAVE_EXPORT:
+        case Command::AUTO_SAVE_EXPORT: {
+            Platform::SettingsRef settings = Platform::GetSettings();
+
+            Platform::FileDialogRef dialog = Platform::CreateSaveFileDialog(SS.GW.window);
+            dialog->AddFilter(C_("file-type", "SolveSpace models"), { SKETCH_EXT });
+            dialog->ThawChoices(settings, "Sketch");
+            dialog->SuggestFilename(SS.saveFile.WithExtension(SKETCH_EXT));
+            if(!SS.saveFile.IsEmpty()) {
+                dialog->SetFilename(SS.saveFile.WithExtension(SKETCH_EXT));
+            }
+            if(!dialog->RunModal()) break;
+            dialog->FreezeChoices(settings, "Sketch");
+
+            Platform::Path slvsFile = dialog->GetFilename().WithExtension(SKETCH_EXT);
+            Platform::Path dxfFile  = slvsFile.WithExtension("dxf");
+            Platform::Path svgFile  = slvsFile.WithExtension("svg");
+
+            if(!SS.SaveToFile(slvsFile)) break;
+
+            SS.AddToRecentList(slvsFile);
+            SS.RemoveAutosave();
+            SS.saveFile = slvsFile;
+            SS.unsaved = false;
+            if(SS.OnSaveFinished) {
+                SS.OnSaveFinished(slvsFile, /*saveAs=*/true, /*isAutosave=*/false);
+            }
+
+            auto canWrite = [](const Platform::Path &path) {
+                FILE *f = OpenFile(path, "wb");
+                if(!f) return false;
+                fclose(f);
+                return true;
+            };
+
+            bool dxfOk = false;
+            bool svgOk = false;
+
+            if(canWrite(dxfFile)) {
+                SS.ExportViewOrWireframeTo(dxfFile, /*exportWireframe=*/false);
+                dxfOk = FileExists(dxfFile);
+                if(dxfOk && SS.OnSaveFinished) {
+                    SS.OnSaveFinished(dxfFile, /*saveAs=*/false, /*isAutosave=*/false);
+                }
+            }
+
+            if(canWrite(svgFile)) {
+                SS.ExportViewOrWireframeTo(svgFile, /*exportWireframe=*/false);
+                svgOk = FileExists(svgFile);
+                if(svgOk && SS.OnSaveFinished) {
+                    SS.OnSaveFinished(svgFile, /*saveAs=*/false, /*isAutosave=*/false);
+                }
+            }
+
+            // This auto-flow should not leave us in export preview mode.
+            SS.justExportedInfo.draw = false;
+            SS.justExportedInfo.warning = false;
+            SS.justExportedInfo.message.clear();
+            if(SS.exportMode) {
+                SS.exportMode = false;
+                SS.GenerateAll(SolveSpaceUI::Generate::ALL);
+            }
+
+            if(!dxfOk || !svgOk) {
+                std::string failed;
+                if(!dxfOk) {
+                    failed += ".dxf";
+                }
+                if(!svgOk) {
+                    if(!failed.empty()) {
+                        failed += ", ";
+                    }
+                    failed += ".svg";
+                }
+
+                SS.justExportedInfo.showOrigin = false;
+                SS.justExportedInfo.warning = true;
+                SS.justExportedInfo.message = ssprintf(
+                    _("Auto export warning: saved the sketch, but failed to write %s."),
+                    failed.c_str());
+                SS.justExportedInfo.draw = true;
+            }
+
+            SS.GW.Invalidate();
+            break;
+        }
+
         case Command::AUTO_LOAD_IMPORT:
         case Command::AUTO_JAVASCRIPT:
         case Command::AUTO_BRIDGE:

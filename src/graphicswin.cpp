@@ -1130,6 +1130,8 @@ void GraphicsWindow::MenuEdit(Command id) {
             SS.TW.HideEditControl();
             SS.nakedEdges.Clear();
             SS.justExportedInfo.draw = false;
+            SS.justExportedInfo.warning = false;
+            SS.justExportedInfo.message.clear();
             SS.centerOfMass.draw = false;
             // This clears the marks drawn to indicate which points are
             // still free to drag.

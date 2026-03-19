@@ -838,7 +838,11 @@ void GraphicsWindow::Draw(Canvas *canvas) {
             u = camera.projRight;
             v = camera.projUp;
         }
-        canvas->DrawVectorText("previewing exported geometry; press Esc to return",
+        const char *overlayMessage = "previewing exported geometry; press Esc to return";
+        if(SS.justExportedInfo.warning && !SS.justExportedInfo.message.empty()) {
+            overlayMessage = SS.justExportedInfo.message.c_str();
+        }
+        canvas->DrawVectorText(overlayMessage,
                               Style::DefaultTextHeight() / camera.scale,
                               p.Plus(u.ScaledBy(10/scale)).Plus(v.ScaledBy(10/scale)), u, v,
                               hcsDatum);

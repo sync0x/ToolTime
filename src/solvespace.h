@@ -731,6 +731,8 @@ public:
     } extraLine;
     struct {
         bool        draw, showOrigin;
+        bool        warning;
+        std::string message;
         Vector      pt, u, v;
     } justExportedInfo;
     struct {

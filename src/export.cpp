@@ -279,6 +279,8 @@ void SolveSpaceUI::ExportViewOrWireframeTo(const Platform::Path &filename, bool 
             SS.justExportedInfo.showOrigin = false;
         }
 
+        SS.justExportedInfo.warning = false;
+        SS.justExportedInfo.message.clear();
         SS.justExportedInfo.draw = true;
         GW.Invalidate();
     }
@@ -853,6 +855,8 @@ void SolveSpaceUI::ExportMeshTo(const Platform::Path &filename) {
     fclose(f);
 
     SS.justExportedInfo.showOrigin = false;
+    SS.justExportedInfo.warning = false;
+    SS.justExportedInfo.message.clear();
     SS.justExportedInfo.draw = true;
     GW.Invalidate();
 }
