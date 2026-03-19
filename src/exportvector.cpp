@@ -1059,11 +1059,75 @@ void PdfFileWriter::Bezier(SBezier *sb) {
 //-----------------------------------------------------------------------------
 // Routines for SVG output
 //-----------------------------------------------------------------------------
+static std::string SvgSystemFallbackLayerName(uint32_t styleHandle) {
+    switch(styleHandle) {
+        case 0: return "#references";
+        case 1: return "active_group";
+        case 2: return "inactive_group";
+        case 6: return "dimensions";
+        default:
+            if(styleHandle < 0x100) {
+                return ssprintf("system_s%x", styleHandle);
+            }
+            return "";
+    }
+}
+
+static bool SvgHasDefaultStyleNamePrefix(const std::string &name) {
+    return name.rfind("#def-", 0) == 0;
+}
+
+static std::string SvgLayerNameForStyle(hStyle hs) {
+    Style *s = Style::Get(hs);
+    if(!s->name.empty() && !SvgHasDefaultStyleNamePrefix(s->name)) {
+        return s->name;
+    }
+
+    std::string fallback = SvgSystemFallbackLayerName(hs.v);
+    if(!fallback.empty()) {
+        return fallback;
+    }
+
+    if(!s->name.empty()) {
+        return s->name;
+    }
+    return ssprintf("s%x", hs.v);
+}
+
+static std::string SvgLayerId(const std::string &layerName, uint32_t styleHandle) {
+    std::string out;
+    out.reserve(layerName.size());
+
+    bool prevUnderscore = false;
+    for(char c : layerName) {
+        if(std::isalnum((unsigned char)c)) {
+            out.push_back(c);
+            prevUnderscore = false;
+        } else {
+            if(!prevUnderscore) {
+                out.push_back('_');
+                prevUnderscore = true;
+            }
+        }
+    }
+
+    if(out.empty()) {
+        out = ssprintf("layer_s%x", styleHandle);
+    }
+    return out;
+}
+
 void SvgFileWriter::StartFile() {
+    layerContent.clear();
+    layerOrder.clear();
+    currentPath.clear();
+    ungroupedContent.clear();
+
     fprintf(f,
 "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.0//EN\" "
     "\"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd\">\r\n"
 "<svg xmlns=\"http://www.w3.org/2000/svg\"  "
+    "xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\" "
     "xmlns:xlink=\"http://www.w3.org/1999/xlink\" "
     "width='%.3fmm' height='%.3fmm' "
     "viewBox=\"0 0 %.3f %.3f\">\r\n"
@@ -1131,7 +1195,8 @@ void SvgFileWriter::Background(RgbaColor color) {
 void SvgFileWriter::StartPath(RgbaColor strokeRgb, double lineWidth,
                               bool filled, RgbaColor fillRgb, hStyle hs)
 {
-    fprintf(f, "<path d='");
+    currentStyle = hs;
+    currentPath = "<path d='";
     prevPt = Vector::From(VERY_POSITIVE, VERY_POSITIVE, VERY_POSITIVE);
 }
 void SvgFileWriter::FinishPath(RgbaColor strokeRgb, double lineWidth,
@@ -1143,19 +1208,27 @@ void SvgFileWriter::FinishPath(RgbaColor strokeRgb, double lineWidth,
             fillRgb.red, fillRgb.green, fillRgb.blue);
     }
     std::string cls = ssprintf("s%x", hs.v);
-    fprintf(f, "' class='%s' %s/>\r\n", cls.c_str(), fill.c_str());
+
+    currentPath += ssprintf("' class='%s' %s/>\r\n", cls.c_str(), fill.c_str());
+
+    if(layerContent.find(hs.v) == layerContent.end()) {
+        layerOrder.push_back(hs.v);
+        layerContent[hs.v] = "";
+    }
+    layerContent[hs.v] += currentPath;
+    currentPath.clear();
 }
 
 void SvgFileWriter::MaybeMoveTo(Vector st, Vector fi) {
     // SVG uses a coordinate system with the origin at top left, +y down
     if(!prevPt.Equals(st)) {
-        fprintf(f, "M%.3f %.3f ", (st.x - ptMin.x), (ptMax.y - st.y));
+        currentPath += ssprintf("M%.3f %.3f ", (st.x - ptMin.x), (ptMax.y - st.y));
     }
     prevPt = fi;
 }
 
 void SvgFileWriter::Triangle(STriangle *tr) {
-    fprintf(f,
+    ungroupedContent += ssprintf(
 "<polygon points='%.3f,%.3f %.3f,%.3f %.3f,%.3f' "
     "stroke='#%02x%02x%02x' "
     "fill='#%02x%02x%02x'/>\r\n",
@@ -1171,7 +1244,7 @@ void SvgFileWriter::Bezier(SBezier *sb) {
     double r;
     if(sb->deg == 1) {
         MaybeMoveTo(sb->ctrl[0], sb->ctrl[1]);
-        fprintf(f, "L%.3f,%.3f ",
+        currentPath += ssprintf("L%.3f,%.3f ",
             (sb->ctrl[1].x - ptMin.x), (ptMax.y - sb->ctrl[1].y));
     } else if(sb->IsCircle(n, &c, &r)) {
         Vector p0 = sb->ctrl[0], p1 = sb->ctrl[2];
@@ -1184,19 +1257,19 @@ void SvgFileWriter::Bezier(SBezier *sb) {
         // Note that clockwise and counter-clockwise are backwards in SVG's
         // mirrored csys.
         MaybeMoveTo(p0, p1);
-        fprintf(f, "A%.3f,%.3f 0 0,%d %.3f,%.3f ",
+        currentPath += ssprintf("A%.3f,%.3f 0 0,%d %.3f,%.3f ",
                         r, r,
                         (dtheta < 0) ? 1 : 0,
                         p1.x - ptMin.x, ptMax.y - p1.y);
     } else if(!sb->IsRational()) {
         if(sb->deg == 2) {
             MaybeMoveTo(sb->ctrl[0], sb->ctrl[2]);
-            fprintf(f, "Q%.3f,%.3f %.3f,%.3f ",
+            currentPath += ssprintf("Q%.3f,%.3f %.3f,%.3f ",
                 sb->ctrl[1].x - ptMin.x, ptMax.y - sb->ctrl[1].y,
                 sb->ctrl[2].x - ptMin.x, ptMax.y - sb->ctrl[2].y);
         } else if(sb->deg == 3) {
             MaybeMoveTo(sb->ctrl[0], sb->ctrl[3]);
-            fprintf(f, "C%.3f,%.3f %.3f,%.3f %.3f,%.3f ",
+            currentPath += ssprintf("C%.3f,%.3f %.3f,%.3f %.3f,%.3f ",
                 sb->ctrl[1].x - ptMin.x, ptMax.y - sb->ctrl[1].y,
                 sb->ctrl[2].x - ptMin.x, ptMax.y - sb->ctrl[2].y,
                 sb->ctrl[3].x - ptMin.x, ptMax.y - sb->ctrl[3].y);
@@ -1207,6 +1280,31 @@ void SvgFileWriter::Bezier(SBezier *sb) {
 }
 
 void SvgFileWriter::FinishAndCloseFile() {
+    if(!ungroupedContent.empty()) {
+        fprintf(f, "%s", ungroupedContent.c_str());
+    }
+
+    if(!layerOrder.empty()) {
+        fprintf(f, "  <!-- Layer groups recovered from SLVS Style.name -->\r\n");
+        for(uint32_t hv : layerOrder) {
+            auto it = layerContent.find(hv);
+            if(it == layerContent.end() || it->second.empty()) continue;
+
+            hStyle hs = { hv };
+            std::string layerName = SvgLayerNameForStyle(hs);
+            std::string layerId = SvgLayerId(layerName, hv);
+
+            fprintf(f,
+                    "  <g id=\"%s\" data-name=\"%s\" inkscape:label=\"%s\" inkscape:groupmode=\"layer\">\r\n",
+                    layerId.c_str(), layerName.c_str(), layerName.c_str());
+
+            fprintf(f, "%s", it->second.c_str());
+            fprintf(f, "  </g>\r\n");
+        }
+    } else {
+        fprintf(f, "  <!-- No matching SVG class lines found for SLVS styles -->\r\n");
+    }
+
     fprintf(f, "\r\n</svg>\r\n");
     fclose(f);
 }

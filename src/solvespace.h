@@ -416,6 +416,11 @@ public:
 class SvgFileWriter : public VectorFileWriter {
 public:
     Vector prevPt;
+    std::unordered_map<uint32_t, std::string> layerContent;
+    std::vector<uint32_t> layerOrder;
+    std::string currentPath;
+    std::string ungroupedContent;
+    hStyle currentStyle;
     void MaybeMoveTo(Vector s, Vector f);
 
     void StartPath( RgbaColor strokeRgb, double lineWidth,
