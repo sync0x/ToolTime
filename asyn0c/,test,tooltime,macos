@@ -16,16 +16,16 @@ if [ "$2" = "arm64" ]; then
     OSX_ARCHITECTURE="arm64"
     CMAKE_PREFIX_PATH=$(find /tmp/libomp-arm64/libomp -depth 1)
     git apply cmake/libpng-macos-arm64.patch || echo "Could not apply patch, probably already patched..."
-    mkdir tooltime_mac_arm64 || true
-    cd tooltime_mac_arm64
+    mkdir ToolTime_mac_arm64 || true
+    cd ToolTime_mac_arm64
 elif [ "$2" = "x86_64" ]; then
     OSX_ARCHITECTURE="x86_64"
     CMAKE_PREFIX_PATH=$(find /tmp/libomp-x86_64/libomp -depth 1)
-    mkdir tooltime_mac_amd64 || true
-    cd tooltime_mac_amd64
+    mkdir ToolTime_mac_amd64 || true
+    cd ToolTime_mac_amd64
 else
-    mkdir tooltime_mac_int64 || true
-    cd tooltine_mac_int64
+    mkdir ToolTime_mac_int64 || true
+    cd ToolTine_mac_int64
 fi
 
 if [ "$3" = "xcode" ]; then

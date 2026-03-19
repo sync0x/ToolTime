@@ -1,7 +1,7 @@
 #!/bin/sh -xe
 
-mkdir tooltime_win
-cd tooltime_win
+mkdir ToolTime_win
+cd ToolTime_win
 
 if [ "$1" = "release" ]; then
     if [ "$2" = "openmp" ]; then
