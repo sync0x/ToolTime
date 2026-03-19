@@ -1,4 +1,4 @@
-±²³SolveSpaceREVa
+ï¿½ï¿½ï¿½SolveSpaceREVa
 
 
 Group.h.v=00000001
@@ -170,7 +170,7 @@ Request.workplane.v=80020000
 Request.group.v=00000002
 Request.construction=0
 Request.str=Text
-Request.font=Gentium-R.ttf
+Request.font=BitstreamVeraSans-Roman-builtin.ttf
 Request.aspectRatio=2.89213176826959461607
 AddRequest
 
@@ -250,7 +250,7 @@ Entity.h.v=00040000
 Entity.type=15000
 Entity.construction=0
 Entity.str=Text
-Entity.font=Gentium-R.ttf
+Entity.font=BitstreamVeraSans-Roman-builtin.ttf
 Entity.point[0].v=00040001
 Entity.point[1].v=00040002
 Entity.point[2].v=00040003
