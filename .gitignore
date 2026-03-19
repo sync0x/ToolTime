@@ -16,6 +16,7 @@
 /obj-*/
 /*.slvs
 .vscode/
+.playwright-mcp/
 
 # Visual Studio
 out/
