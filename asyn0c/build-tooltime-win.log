@@ -1,0 +1,473 @@
+[  3%] Built target zlibstatic
+[  5%] Built target angle_common
+[  6%] Built target angle_preprocessor
+[  8%] Built target genfiles
+[ 10%] Built target mimalloc-static
+[ 10%] Built target resources
+[ 13%] Built target dxfrw
+[ 20%] Built target freetype
+[ 24%] Built target pixman
+[ 27%] Built target png_static
+[ 38%] Built target angle_translator_lib
+[ 39%] Built target angle_translator
+[ 55%] Built target cairo
+[ 55%] Building CXX object src/CMakeFiles/solvespace-core.dir/entity.cpp.obj
+[ 56%] Building CXX object src/CMakeFiles/solvespace-core.dir/export.cpp.obj
+[ 56%] Building CXX object src/CMakeFiles/solvespace-core.dir/exportstep.cpp.obj
+[ 56%] Building CXX object src/CMakeFiles/solvespace-core.dir/expr.cpp.obj
+[ 56%] Building CXX object src/CMakeFiles/solvespace-core.dir/file.cpp.obj
+[ 56%] Linking CXX shared library ../bin/libslvs.dll
+[ 56%] Building CXX object src/CMakeFiles/solvespace-core.dir/exportvector.cpp.obj
+[ 56%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/HandleAllocator.cpp.obj
+[ 58%] Built target slvs
+[ 58%] Building CXX object src/CMakeFiles/solvespace-core.dir/generate.cpp.obj
+/dome/cccc/big_software/ToolTime/src/exportvector.cpp: In lambda function:
+/dome/cccc/big_software/ToolTime/src/exportvector.cpp:130:25: warning: implicitly-declared ‘DRW_Polyline& DRW_Polyline::operator=(const DRW_Polyline&)’ is deprecated [-Wdeprecated-copy]
+  130 |             polyline = {};
+      |                         ^
+In file included from /dome/cccc/big_software/ToolTime/extlib/libdxfrw/libdxfrw.h:17,
+                 from /dome/cccc/big_software/ToolTime/src/exportvector.cpp:6:
+/dome/cccc/big_software/ToolTime/extlib/libdxfrw/drw_entities.h:819:5: note: because ‘DRW_Polyline’ has user-provided ‘DRW_Polyline::DRW_Polyline(const DRW_Polyline&)’
+  819 |     DRW_Polyline(const DRW_Polyline& p) : DRW_Point(p) {
+      |     ^~~~~~~~~~~~
+/dome/cccc/big_software/ToolTime/extlib/libdxfrw/drw_entities.h: In member function ‘DRW_Point& DRW_Point::operator=(const DRW_Point&)’:
+/dome/cccc/big_software/ToolTime/extlib/libdxfrw/drw_entities.h:247:7: warning: implicitly-declared ‘DRW_Entity& DRW_Entity::operator=(const DRW_Entity&)’ is deprecated [-Wdeprecated-copy]
+  247 | class DRW_Point : public DRW_Entity {
+      |       ^~~~~~~~~
+/dome/cccc/big_software/ToolTime/extlib/libdxfrw/drw_entities.h:125:5: note: because ‘DRW_Entity’ has user-provided ‘DRW_Entity::DRW_Entity(const DRW_Entity&)’
+  125 |     DRW_Entity(const DRW_Entity& e) {
+      |     ^~~~~~~~~~
+/dome/cccc/big_software/ToolTime/extlib/libdxfrw/drw_entities.h: In member function ‘DRW_Polyline& DRW_Polyline::operator=(const DRW_Polyline&)’:
+/dome/cccc/big_software/ToolTime/extlib/libdxfrw/drw_entities.h:808:7: note: synthesized method ‘DRW_Point& DRW_Point::operator=(const DRW_Point&)’ first required here
+  808 | class DRW_Polyline : public DRW_Point {
+      |       ^~~~~~~~~~~~
+/dome/cccc/big_software/ToolTime/src/exportvector.cpp: In lambda function:
+/dome/cccc/big_software/ToolTime/src/exportvector.cpp:130:25: note: synthesized method ‘DRW_Polyline& DRW_Polyline::operator=(const DRW_Polyline&)’ first required here
+  130 |             polyline = {};
+      |                         ^
+[ 59%] Building CXX object src/CMakeFiles/solvespace-core.dir/graphicswin.cpp.obj
+/dome/cccc/big_software/ToolTime/extlib/angle/src/libANGLE/HandleAllocator.cpp: In constructor ‘gl::HandleAllocator::HandleAllocator()’:
+/dome/cccc/big_software/ToolTime/extlib/angle/src/libANGLE/HandleAllocator.cpp:29:52: error: ‘numeric_limits’ is not a member of ‘std’
+   29 |     mUnallocatedList.push_back(HandleRange(1, std::numeric_limits<GLuint>::max()));
+      |                                                    ^~~~~~~~~~~~~~
+/dome/cccc/big_software/ToolTime/extlib/angle/src/libANGLE/HandleAllocator.cpp:29:76: error: ‘::max’ has not been declared; did you mean ‘std::max’?
+   29 |     mUnallocatedList.push_back(HandleRange(1, std::numeric_limits<GLuint>::max()));
+      |                                                                            ^~~
+      |                                                                            std::max
+In file included from /usr/lib/gcc/x86_64-w64-mingw32/13-win32/include/c++/algorithm:61,
+                 from /dome/cccc/big_software/ToolTime/extlib/angle/src/libANGLE/HandleAllocator.cpp:12:
+/usr/lib/gcc/x86_64-w64-mingw32/13-win32/include/c++/bits/stl_algo.h:5805:5: note: ‘std::max’ declared here
+ 5805 |     max(initializer_list<_Tp> __l, _Compare __comp)
+      |     ^~~
+/dome/cccc/big_software/ToolTime/extlib/angle/src/libANGLE/HandleAllocator.cpp:29:43: error: expected primary-expression before ‘(’ token
+   29 |     mUnallocatedList.push_back(HandleRange(1, std::numeric_limits<GLuint>::max()));
+      |                                           ^
+/dome/cccc/big_software/ToolTime/extlib/angle/src/libANGLE/HandleAllocator.cpp:29:52: error: ‘numeric_limits’ is not a member of ‘std’
+   29 |     mUnallocatedList.push_back(HandleRange(1, std::numeric_limits<GLuint>::max()));
+      |                                                    ^~~~~~~~~~~~~~
+/dome/cccc/big_software/ToolTime/extlib/angle/src/libANGLE/HandleAllocator.cpp:29:73: error: expected primary-expression before ‘>’ token
+   29 |     mUnallocatedList.push_back(HandleRange(1, std::numeric_limits<GLuint>::max()));
+      |                                                                         ^
+/dome/cccc/big_software/ToolTime/extlib/angle/src/libANGLE/HandleAllocator.cpp:29:76: error: ‘::max’ has not been declared; did you mean ‘std::max’?
+   29 |     mUnallocatedList.push_back(HandleRange(1, std::numeric_limits<GLuint>::max()));
+      |                                                                            ^~~
+      |                                                                            std::max
+/usr/lib/gcc/x86_64-w64-mingw32/13-win32/include/c++/bits/stl_algo.h:5805:5: note: ‘std::max’ declared here
+ 5805 |     max(initializer_list<_Tp> __l, _Compare __comp)
+      |     ^~~
+make[2]: *** [extlib/angle/CMakeFiles/ANGLE.dir/build.make:302: extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/HandleAllocator.cpp.obj] Error 1
+make[1]: *** [CMakeFiles/Makefile2:948: extlib/angle/CMakeFiles/ANGLE.dir/all] Error 2
+make[1]: *** Waiting for unfinished jobs....
+[ 59%] Building CXX object src/CMakeFiles/solvespace-core.dir/group.cpp.obj
+[ 59%] Building CXX object src/CMakeFiles/solvespace-core.dir/groupmesh.cpp.obj
+/dome/cccc/big_software/ToolTime/src/groupmesh.cpp:120: warning: ignoring ‘#pragma omp parallel’ [-Wunknown-pragmas]
+  120 | #pragma omp parallel for
+      | 
+[ 59%] Building CXX object src/CMakeFiles/solvespace-core.dir/importdxf.cpp.obj
+[ 59%] Building CXX object src/CMakeFiles/solvespace-core.dir/importidf.cpp.obj
+[ 59%] Building CXX object src/CMakeFiles/solvespace-core.dir/importmesh.cpp.obj
+[ 59%] Building CXX object src/CMakeFiles/solvespace-core.dir/mesh.cpp.obj
+In file included from /dome/cccc/big_software/ToolTime/extlib/libdxfrw/libdxfrw.h:17,
+                 from /dome/cccc/big_software/ToolTime/src/importdxf.cpp:2:
+/dome/cccc/big_software/ToolTime/extlib/libdxfrw/drw_entities.h: In member function ‘DRW_Point& DRW_Point::operator=(const DRW_Point&)’:
+/dome/cccc/big_software/ToolTime/extlib/libdxfrw/drw_entities.h:247:7: warning: implicitly-declared ‘DRW_Entity& DRW_Entity::operator=(const DRW_Entity&)’ is deprecated [-Wdeprecated-copy]
+  247 | class DRW_Point : public DRW_Entity {
+      |       ^~~~~~~~~
+/dome/cccc/big_software/ToolTime/extlib/libdxfrw/drw_entities.h:125:5: note: because ‘DRW_Entity’ has user-provided ‘DRW_Entity::DRW_Entity(const DRW_Entity&)’
+  125 |     DRW_Entity(const DRW_Entity& e) {
+      |     ^~~~~~~~~~
+/dome/cccc/big_software/ToolTime/extlib/libdxfrw/drw_entities.h: In member function ‘DRW_Block& DRW_Block::operator=(const DRW_Block&)’:
+/dome/cccc/big_software/ToolTime/extlib/libdxfrw/drw_entities.h:529:7: note: synthesized method ‘DRW_Point& DRW_Point::operator=(const DRW_Point&)’ first required here
+  529 | class DRW_Block : public DRW_Point {
+      |       ^~~~~~~~~
+/dome/cccc/big_software/ToolTime/src/importdxf.cpp: In member function ‘virtual void SolveSpace::DxfImport::addBlock(const DRW_Block&)’:
+/dome/cccc/big_software/ToolTime/src/importdxf.cpp:579:27: note: synthesized method ‘DRW_Block& DRW_Block::operator=(const DRW_Block&)’ first required here
+  579 |         readBlock->data = data;
+      |                           ^~~~
+[ 59%] Building CXX object src/CMakeFiles/solvespace-core.dir/modify.cpp.obj
+[ 60%] Building CXX object src/CMakeFiles/solvespace-core.dir/mouse.cpp.obj
+[ 60%] Building CXX object src/CMakeFiles/solvespace-core.dir/polyline.cpp.obj
+[ 60%] Building CXX object src/CMakeFiles/solvespace-core.dir/polygon.cpp.obj
+[ 60%] Building CXX object src/CMakeFiles/solvespace-core.dir/resource.cpp.obj
+[ 60%] Building CXX object src/CMakeFiles/solvespace-core.dir/request.cpp.obj
+[ 60%] Building CXX object src/CMakeFiles/solvespace-core.dir/style.cpp.obj
+[ 60%] Building CXX object src/CMakeFiles/solvespace-core.dir/system.cpp.obj
+[ 60%] Building CXX object src/CMakeFiles/solvespace-core.dir/textscreens.cpp.obj
+[ 61%] Building CXX object src/CMakeFiles/solvespace-core.dir/textwin.cpp.obj
+[ 61%] Building CXX object src/CMakeFiles/solvespace-core.dir/toolbar.cpp.obj
+/dome/cccc/big_software/ToolTime/src/textwin.cpp: In member function ‘void SolveSpace::TextWindow::ClearSuper()’:
+/dome/cccc/big_software/ToolTime/src/textwin.cpp:291:11: warning: ‘void* memset(void*, int, size_t)’ clearing an object of type ‘class SolveSpace::TextWindow’ with no trivial copy-assignment; use assignment or value-initialization instead [-Wclass-memaccess]
+  291 |     memset(this, 0, sizeof(*this));
+      |     ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /dome/cccc/big_software/ToolTime/src/solvespace.h:177,
+                 from /dome/cccc/big_software/ToolTime/src/textwin.cpp:6:
+/dome/cccc/big_software/ToolTime/src/ui.h:181:7: note: ‘class SolveSpace::TextWindow’ declared here
+  181 | class TextWindow {
+      |       ^~~~~~~~~~
+[ 61%] Building CXX object src/CMakeFiles/solvespace-core.dir/ttf.cpp.obj
+[ 61%] Building CXX object src/CMakeFiles/solvespace-core.dir/undoredo.cpp.obj
+[ 61%] Building CXX object src/CMakeFiles/solvespace-core.dir/util.cpp.obj
+[ 61%] Building CXX object src/CMakeFiles/solvespace-core.dir/view.cpp.obj
+[ 61%] Building CXX object src/CMakeFiles/solvespace-core.dir/platform/platform.cpp.obj
+[ 62%] Building CXX object src/CMakeFiles/solvespace-core.dir/platform/gui.cpp.obj
+[ 62%] Building CXX object src/CMakeFiles/solvespace-core.dir/render/render.cpp.obj
+[ 62%] Building CXX object src/CMakeFiles/solvespace-core.dir/render/render2d.cpp.obj
+[ 62%] Building CXX object src/CMakeFiles/solvespace-core.dir/srf/boolean.cpp.obj
+[ 62%] Building CXX object src/CMakeFiles/solvespace-core.dir/srf/curve.cpp.obj
+/dome/cccc/big_software/ToolTime/src/srf/boolean.cpp:204: warning: ignoring ‘#pragma omp parallel’ [-Wunknown-pragmas]
+  204 | #pragma omp parallel for
+      | 
+/dome/cccc/big_software/ToolTime/src/srf/boolean.cpp:211: warning: ignoring ‘#pragma omp critical’ [-Wunknown-pragmas]
+  211 | #pragma omp critical
+      | 
+/dome/cccc/big_software/ToolTime/src/srf/boolean.cpp:679: warning: ignoring ‘#pragma omp critical’ [-Wunknown-pragmas]
+  679 | #pragma omp critical
+      | 
+/dome/cccc/big_software/ToolTime/src/srf/boolean.cpp:696: warning: ignoring ‘#pragma omp parallel’ [-Wunknown-pragmas]
+  696 | #pragma omp parallel for
+      | 
+/dome/cccc/big_software/ToolTime/src/srf/boolean.cpp:711: warning: ignoring ‘#pragma omp parallel’ [-Wunknown-pragmas]
+  711 | #pragma omp parallel for
+      | 
+/dome/cccc/big_software/ToolTime/src/srf/boolean.cpp:848: warning: ignoring ‘#pragma omp parallel’ [-Wunknown-pragmas]
+  848 | #pragma omp parallel for
+      | 
+[ 62%] Building CXX object src/CMakeFiles/solvespace-core.dir/srf/merge.cpp.obj
+[ 62%] Building CXX object src/CMakeFiles/solvespace-core.dir/srf/ratpoly.cpp.obj
+[ 63%] Building CXX object src/CMakeFiles/solvespace-core.dir/srf/raycast.cpp.obj
+[ 63%] Building CXX object src/CMakeFiles/solvespace-core.dir/srf/shell.cpp.obj
+[ 63%] Building CXX object src/CMakeFiles/solvespace-core.dir/srf/surface.cpp.obj
+/dome/cccc/big_software/ToolTime/src/srf/shell.cpp:589: warning: ignoring ‘#pragma omp parallel’ [-Wunknown-pragmas]
+  589 | #pragma omp parallel for
+      | 
+/dome/cccc/big_software/ToolTime/src/srf/shell.cpp:594: warning: ignoring ‘#pragma omp critical’ [-Wunknown-pragmas]
+  594 |         #pragma omp critical
+      | 
+In file included from /usr/lib/gcc/x86_64-w64-mingw32/13-win32/include/c++/bits/stl_pair.h:61,
+                 from /usr/lib/gcc/x86_64-w64-mingw32/13-win32/include/c++/tuple:38,
+                 from /usr/lib/gcc/x86_64-w64-mingw32/13-win32/include/c++/functional:53,
+                 from /dome/cccc/big_software/ToolTime/src/srf/../resource.h:10,
+                 from /dome/cccc/big_software/ToolTime/src/srf/../solvespace.h:10,
+                 from /dome/cccc/big_software/ToolTime/src/srf/curve.cpp:7:
+In function ‘std::_Require<std::__not_<std::__is_tuple_like<_Tp> >, std::is_move_constructible<_Tp>, std::is_move_assignable<_Tp> > std::swap(_Tp&, _Tp&) [with _Tp = SolveSpace::Vector]’,
+    inlined from ‘void SolveSpace::SBezier::Reverse()’ at /dome/cccc/big_software/ToolTime/src/srf/curve.cpp:74:13,
+    inlined from ‘void SolveSpace::SBezierList::CullIdenticalBeziers(bool)’ at /dome/cccc/big_software/ToolTime/src/srf/curve.cpp:244:20:
+/usr/lib/gcc/x86_64-w64-mingw32/13-win32/include/c++/bits/move.h:198:7: warning: ‘bir’ may be used uninitialized [-Wmaybe-uninitialized]
+  198 |       __a = _GLIBCXX_MOVE(__b);
+      |       ^~~
+/dome/cccc/big_software/ToolTime/src/srf/curve.cpp: In member function ‘void SolveSpace::SBezierList::CullIdenticalBeziers(bool)’:
+/dome/cccc/big_software/ToolTime/src/srf/curve.cpp:242:32: note: ‘bir’ declared here
+  242 |         SBezier *bi = &(l[i]), bir;
+      |                                ^~~
+In function ‘std::_Require<std::__not_<std::__is_tuple_like<_Tp> >, std::is_move_constructible<_Tp>, std::is_move_assignable<_Tp> > std::swap(_Tp&, _Tp&) [with _Tp = double]’,
+    inlined from ‘void SolveSpace::SBezier::Reverse()’ at /dome/cccc/big_software/ToolTime/src/srf/curve.cpp:75:13,
+    inlined from ‘void SolveSpace::SBezierList::CullIdenticalBeziers(bool)’ at /dome/cccc/big_software/ToolTime/src/srf/curve.cpp:244:20:
+/usr/lib/gcc/x86_64-w64-mingw32/13-win32/include/c++/bits/move.h:198:11: warning: ‘bir’ may be used uninitialized [-Wmaybe-uninitialized]
+  198 |       __a = _GLIBCXX_MOVE(__b);
+      |           ^
+/dome/cccc/big_software/ToolTime/src/srf/curve.cpp: In member function ‘void SolveSpace::SBezierList::CullIdenticalBeziers(bool)’:
+/dome/cccc/big_software/ToolTime/src/srf/curve.cpp:242:32: note: ‘bir’ declared here
+  242 |         SBezier *bi = &(l[i]), bir;
+      |                                ^~~
+[ 63%] Building CXX object src/CMakeFiles/solvespace-core.dir/srf/surfinter.cpp.obj
+[ 63%] Building CXX object src/CMakeFiles/solvespace-core.dir/srf/triangulate.cpp.obj
+/dome/cccc/big_software/ToolTime/src/srf/surfinter.cpp:30: warning: ignoring ‘#pragma omp critical’ [-Wunknown-pragmas]
+   30 | #pragma omp critical(into)
+      | 
+/dome/cccc/big_software/ToolTime/src/srf/surfinter.cpp:107: warning: ignoring ‘#pragma omp critical’ [-Wunknown-pragmas]
+  107 | #pragma omp critical(into)
+      | 
+/dome/cccc/big_software/ToolTime/src/srf/surfinter.cpp:501: warning: ignoring ‘#pragma omp critical’ [-Wunknown-pragmas]
+  501 | #pragma omp critical(into)
+      | 
+[ 63%] Linking CXX static library ../bin/libsolvespace-core.a
+[ 64%] Built target solvespace-core
+make: *** [Makefile:156: all] Error 2
+[  2%] Built target genfiles
+[  5%] Built target zlibstatic
+[  8%] Built target dxfrw
+[ 10%] Built target mimalloc-static
+[ 11%] Built target angle_preprocessor
+[ 13%] Built target angle_common
+[ 18%] Built target pixman
+[ 24%] Built target freetype
+[ 24%] Built target resources
+[ 27%] Built target png_static
+[ 44%] Built target cairo
+[ 54%] Built target angle_translator_lib
+[ 55%] Built target angle_translator
+[ 56%] Built target slvs
+[ 58%] Building C object exposed/CMakeFiles/CDemo.dir/CDemo.c.obj
+[ 59%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/Program.cpp.obj
+[ 59%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/Query.cpp.obj
+[ 59%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/Platform.cpp.obj
+[ 59%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/HandleAllocator.cpp.obj
+[ 59%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/ResourceManager.cpp.obj
+[ 59%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/Renderbuffer.cpp.obj
+[ 66%] Built target solvespace-core
+[ 66%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/Sampler.cpp.obj
+[ 66%] Linking C executable ../bin/CDemo.exe
+/usr/bin/x86_64-w64-mingw32-ld: unrecognised option '--large-address-aware'
+/usr/bin/x86_64-w64-mingw32-ld: use the --help option for usage information
+collect2: error: ld returned 1 exit status
+make[2]: *** [exposed/CMakeFiles/CDemo.dir/build.make:101: bin/CDemo.exe] Error 1
+make[1]: *** [CMakeFiles/Makefile2:1260: exposed/CMakeFiles/CDemo.dir/all] Error 2
+make[1]: *** Waiting for unfinished jobs....
+[ 66%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/Shader.cpp.obj
+[ 66%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/State.cpp.obj
+[ 66%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/Stream.cpp.obj
+[ 67%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/Surface.cpp.obj
+[ 67%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/Texture.cpp.obj
+[ 67%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/TransformFeedback.cpp.obj
+[ 67%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/Uniform.cpp.obj
+[ 67%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/VertexArray.cpp.obj
+[ 67%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/VertexAttribute.cpp.obj
+[ 67%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/angletypes.cpp.obj
+[ 68%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/formatutils.cpp.obj
+[ 68%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/queryconversions.cpp.obj
+[ 68%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/DeviceImpl.cpp.obj
+[ 68%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/DisplayImpl.cpp.obj
+[ 68%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/Renderer.cpp.obj
+[ 68%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/SurfaceImpl.cpp.obj
+[ 68%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/validationEGL.cpp.obj
+[ 69%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/validationES.cpp.obj
+[ 69%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/validationES2.cpp.obj
+[ 69%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/validationES3.cpp.obj
+[ 69%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/third_party/murmurhash/MurmurHash3.cpp.obj
+[ 69%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d9/Blit9.cpp.obj
+[ 69%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d9/Buffer9.cpp.obj
+[ 69%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d9/DebugAnnotator9.cpp.obj
+[ 70%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d9/Fence9.cpp.obj
+[ 70%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d9/formatutils9.cpp.obj
+[ 70%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d9/Framebuffer9.cpp.obj
+[ 70%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d9/Image9.cpp.obj
+[ 70%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d9/IndexBuffer9.cpp.obj
+[ 70%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d9/Query9.cpp.obj
+[ 70%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d9/Renderer9.cpp.obj
+[ 72%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d9/renderer9_utils.cpp.obj
+[ 72%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d9/RenderTarget9.cpp.obj
+[ 72%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d9/ShaderExecutable9.cpp.obj
+[ 72%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d9/StateManager9.cpp.obj
+[ 72%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d9/SwapChain9.cpp.obj
+[ 72%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d9/TextureStorage9.cpp.obj
+[ 72%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d9/VertexBuffer9.cpp.obj
+[ 73%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d9/VertexDeclarationCache.cpp.obj
+[ 73%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/Blit11.cpp.obj
+[ 73%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/Buffer11.cpp.obj
+[ 73%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/Clear11.cpp.obj
+[ 73%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/DebugAnnotator11.cpp.obj
+[ 73%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/dxgi_support_table.cpp.obj
+[ 73%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/Fence11.cpp.obj
+[ 73%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/formatutils11.cpp.obj
+[ 74%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/Framebuffer11.cpp.obj
+[ 74%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/Image11.cpp.obj
+[ 74%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/IndexBuffer11.cpp.obj
+[ 74%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/InputLayoutCache.cpp.obj
+[ 74%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/load_functions_table_autogen.cpp.obj
+[ 74%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/PixelTransfer11.cpp.obj
+[ 74%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/Query11.cpp.obj
+[ 75%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/Renderer11.cpp.obj
+[ 75%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/renderer11_utils.cpp.obj
+[ 75%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/RenderStateCache.cpp.obj
+[ 75%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/RenderTarget11.cpp.obj
+[ 75%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/ShaderExecutable11.cpp.obj
+[ 75%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/StateManager11.cpp.obj
+[ 75%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/Stream11.cpp.obj
+[ 76%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/SwapChain11.cpp.obj
+[ 76%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/TextureStorage11.cpp.obj
+[ 76%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/Trim11.cpp.obj
+[ 76%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/texture_format_table_autogen.cpp.obj
+[ 76%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/VertexArray11.cpp.obj
+[ 76%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/VertexBuffer11.cpp.obj
+[ 76%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/d3d11/win32/NativeWindow.cpp.obj
+[ 77%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/third_party/systeminfo/SystemInfo.cpp.obj
+[ 77%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/BufferD3D.cpp.obj
+[ 77%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/CompilerD3D.cpp.obj
+[ 77%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/copyimage.cpp.obj
+[ 77%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/DeviceD3D.cpp.obj
+[ 77%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/DisplayD3D.cpp.obj
+[ 77%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/DynamicHLSL.cpp.obj
+[ 78%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/EGLImageD3D.cpp.obj
+[ 78%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/formatutilsD3D.cpp.obj
+[ 78%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/FramebufferD3D.cpp.obj
+[ 78%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/HLSLCompiler.cpp.obj
+[ 78%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/ImageD3D.cpp.obj
+[ 78%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/IndexBuffer.cpp.obj
+[ 78%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/IndexDataManager.cpp.obj
+[ 79%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/loadimage.cpp.obj
+[ 79%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/loadimageSSE2.cpp.obj
+[ 79%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/loadimage_etc.cpp.obj
+[ 79%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/ProgramD3D.cpp.obj
+[ 79%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/RenderbufferD3D.cpp.obj
+[ 79%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/RendererD3D.cpp.obj
+[ 79%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/RenderTargetD3D.cpp.obj
+[ 80%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/ShaderD3D.cpp.obj
+[ 80%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/ShaderExecutableD3D.cpp.obj
+[ 80%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/SurfaceD3D.cpp.obj
+[ 80%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/TextureD3D.cpp.obj
+[ 80%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/TransformFeedbackD3D.cpp.obj
+[ 80%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/VaryingPacking.cpp.obj
+[ 80%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/VertexBuffer.cpp.obj
+[ 81%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/d3d/VertexDataManager.cpp.obj
+[ 81%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/BlitGL.cpp.obj
+[ 81%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/BufferGL.cpp.obj
+[ 81%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/CompilerGL.cpp.obj
+[ 81%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/DisplayGL.cpp.obj
+[ 81%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/FenceNVGL.cpp.obj
+[ 81%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/FenceSyncGL.cpp.obj
+[ 82%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/FramebufferGL.cpp.obj
+[ 82%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/FunctionsGL.cpp.obj
+[ 82%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/ProgramGL.cpp.obj
+[ 82%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/QueryGL.cpp.obj
+[ 82%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/RenderbufferGL.cpp.obj
+[ 82%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/RendererGL.cpp.obj
+[ 82%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/SamplerGL.cpp.obj
+[ 82%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/ShaderGL.cpp.obj
+[ 83%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/StateManagerGL.cpp.obj
+[ 83%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/SurfaceGL.cpp.obj
+[ 83%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/TextureGL.cpp.obj
+[ 83%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/TransformFeedbackGL.cpp.obj
+[ 83%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/VertexArrayGL.cpp.obj
+[ 83%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/formatutilsgl.cpp.obj
+[ 83%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/renderergl_utils.cpp.obj
+[ 84%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/wgl/DisplayWGL.cpp.obj
+[ 84%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/wgl/DXGISwapChainWindowSurfaceWGL.cpp.obj
+[ 84%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/wgl/FunctionsWGL.cpp.obj
+[ 84%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/wgl/PbufferSurfaceWGL.cpp.obj
+[ 84%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/wgl/WindowSurfaceWGL.cpp.obj
+[ 84%] Building CXX object extlib/angle/CMakeFiles/ANGLE.dir/src/libANGLE/renderer/gl/wgl/wgl_utils.cpp.obj
+[ 84%] Linking CXX static library ../../bin/libANGLE.a
+[ 87%] Built target ANGLE
+make: *** [Makefile:156: all] Error 2
+[  2%] Built target genfiles
+[  5%] Built target zlibstatic
+[  6%] Built target angle_preprocessor
+[  6%] Built target resources
+[  9%] Built target dxfrw
+[ 11%] Built target mimalloc-static
+[ 13%] Built target angle_common
+[ 20%] Built target freetype
+[ 23%] Built target png_static
+[ 27%] Built target pixman
+[ 38%] Built target angle_translator_lib
+[ 54%] Built target cairo
+[ 55%] Built target angle_translator
+[ 56%] Built target slvs
+[ 56%] Linking C executable ../bin/CDemo.exe
+[ 58%] Built target CDemo
+[ 65%] Built target solvespace-core
+[ 65%] Building CXX object src/CMakeFiles/solvespace-headless.dir/solvespace.cpp.obj
+[ 65%] Building CXX object src/CMakeFiles/solvespace-headless.dir/render/rendercairo.cpp.obj
+[ 65%] Building CXX object src/CMakeFiles/solvespace-headless.dir/platform/guinone.cpp.obj
+[ 87%] Built target ANGLE
+[ 87%] Building CXX object extlib/angle/CMakeFiles/GLESv2.dir/src/libGLESv2/entry_points_egl_ext.cpp.obj
+[ 87%] Building CXX object extlib/angle/CMakeFiles/GLESv2.dir/src/libGLESv2/entry_points_egl.cpp.obj
+[ 88%] Building CXX object extlib/angle/CMakeFiles/GLESv2.dir/src/libGLESv2/entry_points_gles_2_0.cpp.obj
+[ 88%] Building CXX object extlib/angle/CMakeFiles/GLESv2.dir/src/libGLESv2/entry_points_gles_2_0_ext.cpp.obj
+[ 88%] Building CXX object extlib/angle/CMakeFiles/GLESv2.dir/src/libGLESv2/entry_points_gles_3_0.cpp.obj
+[ 88%] Building CXX object extlib/angle/CMakeFiles/GLESv2.dir/src/libGLESv2/global_state.cpp.obj
+[ 88%] Building CXX object extlib/angle/CMakeFiles/GLESv2.dir/src/libGLESv2/libGLESv2.cpp.obj
+[ 88%] Building RC object extlib/angle/CMakeFiles/GLESv2.dir/src/libGLESv2/libGLESv2.rc.res
+[ 88%] Linking CXX static library ../bin/libsolvespace-headless.a
+[ 88%] Built target solvespace-headless
+[ 88%] Building CXX object src/CMakeFiles/solvespace-cli.dir/platform/entrycli.cpp.obj
+[ 88%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/harness.cpp.obj
+[ 89%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/analysis/contour_area/test.cpp.obj
+[ 89%] Building CXX object test/CMakeFiles/solvespace-debugtool.dir/debugtool.cpp.obj
+[ 89%] Building RC object src/CMakeFiles/solvespace-cli.dir/__/res/resources.rc.res
+[ 90%] Building RC object test/CMakeFiles/solvespace-debugtool.dir/__/res/resources.rc.res
+[ 90%] Building CXX object bench/CMakeFiles/solvespace-benchmark.dir/harness.cpp.obj
+[ 90%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/core/expr/test.cpp.obj
+[ 90%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/core/locale/test.cpp.obj
+[ 90%] Linking CXX static library ../../bin/libGLESv2.a
+[ 90%] Built target GLESv2
+[ 90%] Building RC object bench/CMakeFiles/solvespace-benchmark.dir/__/res/resources.rc.res
+[ 90%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/core/path/test.cpp.obj
+[ 90%] Linking CXX executable ../bin/solvespace-debugtool.exe
+[ 90%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/points_coincident/test.cpp.obj
+[ 91%] Linking CXX executable ../bin/solvespace-benchmark.exe
+[ 91%] Built target solvespace-debugtool
+[ 91%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/pt_pt_distance/test.cpp.obj
+[ 91%] Linking CXX executable ../bin/solvespace-cli.exe
+[ 91%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/pt_plane_distance/test.cpp.obj
+[ 91%] Building CXX object extlib/angle/CMakeFiles/EGL.dir/src/libEGL/libEGL.cpp.obj
+[ 91%] Built target solvespace-benchmark
+[ 91%] Building RC object extlib/angle/CMakeFiles/EGL.dir/src/libEGL/libEGL.rc.res
+[ 92%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/pt_line_distance/test.cpp.obj
+[ 92%] Built target solvespace-cli
+[ 92%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/pt_face_distance/test.cpp.obj
+[ 92%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/proj_pt_distance/test.cpp.obj
+[ 92%] Linking CXX static library ../../bin/libEGL.a
+[ 92%] Built target EGL
+[ 92%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/pt_in_plane/test.cpp.obj
+[ 92%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/pt_on_line/test.cpp.obj
+[ 92%] Building CXX object src/CMakeFiles/solvespace.dir/solvespace.cpp.obj
+[ 92%] Building CXX object src/CMakeFiles/solvespace.dir/platform/entrygui.cpp.obj
+[ 92%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/pt_on_face/test.cpp.obj
+[ 93%] Building RC object src/CMakeFiles/solvespace.dir/__/res/resources.rc.res
+[ 93%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/equal_length_lines/test.cpp.obj
+[ 94%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/length_ratio/test.cpp.obj
+[ 94%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/eq_len_pt_line_d/test.cpp.obj
+[ 94%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/eq_pt_ln_distances/test.cpp.obj
+[ 94%] Building CXX object src/CMakeFiles/solvespace.dir/render/gl3shader.cpp.obj
+[ 94%] Building CXX object src/CMakeFiles/solvespace.dir/render/rendergl3.cpp.obj
+[ 94%] Building CXX object src/CMakeFiles/solvespace.dir/platform/guiwin.cpp.obj
+[ 94%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/equal_angle/test.cpp.obj
+[ 94%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/equal_line_arc_len/test.cpp.obj
+[ 94%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/length_difference/test.cpp.obj
+[ 94%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/symmetric/test.cpp.obj
+[ 95%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/symmetric_horiz/test.cpp.obj
+[ 95%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/symmetric_vert/test.cpp.obj
+[ 95%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/symmetric_line/test.cpp.obj
+[ 95%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/at_midpoint/test.cpp.obj
+[ 95%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/horizontal/test.cpp.obj
+[ 95%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/vertical/test.cpp.obj
+[ 95%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/diameter/test.cpp.obj
+[ 96%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/pt_on_circle/test.cpp.obj
+[ 96%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/same_orientation/test.cpp.obj
+[ 96%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/angle/test.cpp.obj
+[ 96%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/parallel/test.cpp.obj
+[ 96%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/perpendicular/test.cpp.obj
+[ 96%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/arc_line_tangent/test.cpp.obj
+[ 96%] Linking CXX executable ../bin/solvespace.exe
+[ 96%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/cubic_line_tangent/test.cpp.obj
+[ 96%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/curve_curve_tangent/test.cpp.obj
+[ 97%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/equal_radius/test.cpp.obj
+[ 97%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/where_dragged/test.cpp.obj
+[ 97%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/constraint/comment/test.cpp.obj
+[ 97%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/request/arc_of_circle/test.cpp.obj
+[ 97%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/request/circle/test.cpp.obj
+[ 97%] Built target solvespace
+[ 97%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/request/cubic/test.cpp.obj
+[ 97%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/request/cubic_periodic/test.cpp.obj
+[ 98%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/request/datum_point/test.cpp.obj
+[ 98%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/request/image/test.cpp.obj
+[ 98%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/request/line_segment/test.cpp.obj
+[ 98%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/request/ttf_text/test.cpp.obj
+[ 98%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/request/workplane/test.cpp.obj
+[ 98%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/group/link/test.cpp.obj
+[ 98%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/group/translate_asy/test.cpp.obj
+[100%] Building CXX object test/CMakeFiles/solvespace-testsuite.dir/group/translate_nd/test.cpp.obj
+[100%] Building RC object test/CMakeFiles/solvespace-testsuite.dir/__/res/resources.rc.res
+[100%] Linking CXX executable ../bin/solvespace-testsuite.exe
+[100%] Built target solvespace-testsuite
