@@ -6,6 +6,16 @@
 #include <libdxfrw.h>
 #include "solvespace.h"
 
+template <typename T>
+static void DrwPushOwned(std::vector<T *> &container, T *value) {
+    container.push_back(value);
+}
+
+template <typename T>
+static void DrwPushOwned(std::vector<std::shared_ptr<T>> &container, T *value) {
+    container.emplace_back(value);
+}
+
 //-----------------------------------------------------------------------------
 // Routines for DXF export
 //-----------------------------------------------------------------------------
@@ -133,18 +143,18 @@ public:
             if(!(EXACT(start->pos.z == 0.0) && EXACT(next->pos.z == 0.0))) {
                 polyline.flags |= 8 /* 3d polyline */;
             }
-            polyline.vertlist.push_back(
-                new DRW_Vertex(start->pos.x, start->pos.y, start->pos.z, 0.0));
-            polyline.vertlist.push_back(
-                new DRW_Vertex(next->pos.x, next->pos.y, next->pos.z, 0.0));
+            DrwPushOwned(polyline.vertlist,
+                         new DRW_Vertex(start->pos.x, start->pos.y, start->pos.z, 0.0));
+            DrwPushOwned(polyline.vertlist,
+                         new DRW_Vertex(next->pos.x, next->pos.y, next->pos.z, 0.0));
         };
 
         auto nextFunc = [&](PolylineBuilder::Vertex *next, PolylineBuilder::Edge *e) {
             if(!EXACT(next->pos.z == 0.0)) {
                 polyline.flags |= 8 /* 3d polyline */;
             }
-            polyline.vertlist.push_back(
-                new DRW_Vertex(next->pos.x, next->pos.y, next->pos.z, 0.0));
+            DrwPushOwned(polyline.vertlist,
+                         new DRW_Vertex(next->pos.x, next->pos.y, next->pos.z, 0.0));
         };
 
         auto endFunc = [&]() {
@@ -371,7 +381,7 @@ public:
         for(int i = 0; i < lv.n; i++) {
             Vector *v = &lv[i];
             DRW_Vertex *vertex = new DRW_Vertex(v->x, v->y, v->z, 0.0);
-            polyline.vertlist.push_back(vertex);
+            DrwPushOwned(polyline.vertlist, vertex);
         }
         dxf->writePolyline(&polyline);
         lv.Clear();
@@ -410,8 +420,8 @@ public:
         spline.ncontrol = sb->deg + 1;
         makeKnotsFor(&spline);
         for(int i = 0; i <= sb->deg; i++) {
-            spline.controllist.push_back(
-                new DRW_Coord(sb->ctrl[i].x, sb->ctrl[i].y, sb->ctrl[i].z));
+            DrwPushOwned(spline.controllist,
+                         new DRW_Coord(sb->ctrl[i].x, sb->ctrl[i].y, sb->ctrl[i].z));
             if(isRational) spline.weightlist.push_back(sb->weight[i]);
         }
         dxf->writeSpline(&spline);

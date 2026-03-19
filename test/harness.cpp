@@ -407,7 +407,9 @@ int main(int argc, char **argv) {
 
     // At last, try to reset all caches we or our dependencies have, to make SNR
     // of memory checking tools like valgrind higher.
+#if !defined(_WIN32)
     cairo_debug_reset_static_data();
+#endif
 
     return (failTally > 0);
 }
