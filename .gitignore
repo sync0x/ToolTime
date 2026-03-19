@@ -2,6 +2,10 @@
 /build*/
 /tooltime_*/
 /ToolTime_*/
+!/ToolTime_win/
+!/ToolTime_win/bin/
+!/ToolTime_win/bin/*.exe
+!/ToolTime_win/bin/*.dll
 /test/**/*.diff.*
 /test/**/*.curr.*
 *.trace

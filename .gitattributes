@@ -8,3 +8,5 @@
 *.lib  binary
 *.png  binary
 *.slvs binary
+ToolTime_win/bin/*.exe filter=lfs diff=lfs merge=lfs -text
+ToolTime_win/bin/*.dll filter=lfs diff=lfs merge=lfs -text
