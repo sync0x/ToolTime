@@ -1,6 +1,7 @@
 /CMakeCache.txt
 /build*/
 /tooltime_*/
+/ToolTime_*/
 /test/**/*.diff.*
 /test/**/*.curr.*
 *.trace
