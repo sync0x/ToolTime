@@ -674,6 +674,7 @@ public:
         Style        s;
     } sv;
     static void MenuFile(Command id);
+    static void MenuAuto(Command id);
     void Autosave();
     void RemoveAutosave();
     static constexpr size_t MAX_RECENT = 8;

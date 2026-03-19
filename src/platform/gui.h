@@ -86,10 +86,12 @@ struct KeyboardEvent {
     };
     bool        shiftDown;
     bool        controlDown;
+    bool        altDown;
 
     bool Equals(const KeyboardEvent &other) {
         return type == other.type && key == other.key &&
             shiftDown == other.shiftDown && controlDown == other.controlDown &&
+            altDown == other.altDown &&
             ((key == Key::CHARACTER && chr == other.chr) ||
              (key == Key::FUNCTION && num == other.num));
     }

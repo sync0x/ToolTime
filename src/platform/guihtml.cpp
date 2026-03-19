@@ -833,7 +833,6 @@ public:
 
     static EM_BOOL KeyboardCallback(int emEventType, const EmscriptenKeyboardEvent *emEvent,
                                     void *data) {
-        if(emEvent->altKey) return EM_FALSE;
         if(emEvent->repeat) return EM_FALSE;
 
         WindowImplHtml *window = (WindowImplHtml *)data;
@@ -852,6 +851,7 @@ public:
         }
         event.shiftDown   = emEvent->shiftKey;
         event.controlDown = emEvent->ctrlKey;
+        event.altDown     = emEvent->altKey;
 
         std::string key = emEvent->key;
         if(key[0] == 'F' && isdigit(key[1])) {

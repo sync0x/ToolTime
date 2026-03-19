@@ -23,21 +23,31 @@ struct MenuEntry {
 #define mReq  (&GraphicsWindow::MenuRequest)
 #define mCon  (&Constraint::MenuConstrain)
 #define mFile (&SolveSpaceUI::MenuFile)
+#define mAuto (&SolveSpaceUI::MenuAuto)
 #define mGrp  (&Group::MenuGroup)
 #define mAna  (&SolveSpaceUI::MenuAnalyze)
 #define mHelp (&SolveSpaceUI::MenuHelp)
 #define SHIFT_MASK 0x100
 #define CTRL_MASK  0x200
-#define FN_MASK    0x400
+#define ALT_MASK   0x400
+#define FN_MASK    0x800
 
 #define S     SHIFT_MASK
 #define C     CTRL_MASK
+#define A     ALT_MASK
 #define F     FN_MASK
 #define KN    MenuKind::NONE
 #define KC    MenuKind::CHECK_MARK
 #define KR    MenuKind::RADIO_MARK
 const MenuEntry Menu[] = {
 //lv label                              cmd                        accel    kind
+{ 0, N_("A&uto"),                       Command::NONE,             0,       KN, NULL   },
+{ 1, N_("Save && Export"),              Command::AUTO_SAVE_EXPORT, 0,       KN, mAuto  },
+{ 1, N_("Load / Import"),               Command::AUTO_LOAD_IMPORT, 0,       KN, mAuto  },
+{ 1,  NULL,                             Command::NONE,             0,       KN, NULL   },
+{ 1, N_("JavaScript"),                  Command::AUTO_JAVASCRIPT,  0,       KN, mAuto  },
+{ 1, N_("Bridge"),                      Command::AUTO_BRIDGE,      0,       KN, mAuto  },
+
 { 0, N_("&File"),                       Command::NONE,             0,       KN, NULL   },
 { 1, N_("&New"),                        Command::NEW,              C|'n',   KN, mFile  },
 { 1, N_("&Open..."),                    Command::OPEN,             C|'o',   KN, mFile  },
@@ -46,7 +56,7 @@ const MenuEntry Menu[] = {
 { 1, N_("Save &As..."),                 Command::SAVE_AS,          C|S|'s', KN, mFile  },
 { 1,  NULL,                             Command::NONE,             0,       KN, NULL   },
 { 1, N_("Export &Image..."),            Command::EXPORT_IMAGE,     0,       KN, mFile  },
-{ 1, N_("Export 2d &View..."),          Command::EXPORT_VIEW,      0,       KN, mFile  },
+{ 1, N_("Export 2d &View..."),          Command::EXPORT_VIEW,      C|A|'s', KN, mFile  },
 { 1, N_("Export 2d &Section..."),       Command::EXPORT_SECTION,   0,       KN, mFile  },
 { 1, N_("Export 3d &Wireframe..."),     Command::EXPORT_WIREFRAME, 0,       KN, mFile  },
 { 1, N_("Export Triangle &Mesh..."),    Command::EXPORT_MESH,      0,       KN, mFile  },
@@ -191,6 +201,7 @@ const MenuEntry Menu[] = {
 };
 #undef S
 #undef C
+#undef A
 #undef F
 #undef KN
 #undef KC
@@ -221,6 +232,9 @@ Platform::KeyboardEvent GraphicsWindow::AcceleratorForCommand(Command cmd) {
     }
     if(rawAccel & CTRL_MASK) {
         accel.controlDown = true;
+    }
+    if(rawAccel & ALT_MASK) {
+        accel.altDown = true;
     }
     if(rawAccel & FN_MASK) {
         accel.key = Platform::KeyboardEvent::Key::FUNCTION;

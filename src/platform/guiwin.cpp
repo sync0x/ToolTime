@@ -975,18 +975,33 @@ public:
             }
 
             case WM_KEYDOWN:
-            case WM_KEYUP: {
+            case WM_KEYUP:
+            case WM_SYSKEYDOWN:
+            case WM_SYSKEYUP: {
                 Platform::KeyboardEvent event = {};
-                if(msg == WM_KEYDOWN) {
+                if(msg == WM_KEYDOWN || msg == WM_SYSKEYDOWN) {
                     event.type = Platform::KeyboardEvent::Type::PRESS;
-                } else if(msg == WM_KEYUP) {
+                } else if(msg == WM_KEYUP || msg == WM_SYSKEYUP) {
                     event.type = Platform::KeyboardEvent::Type::RELEASE;
+                }
+
+                if(msg == WM_SYSKEYDOWN && wParam == VK_MENU) {
+                    HWND hParent;
+                    sscheck(hParent = GetParent(h));
+                    if(hParent != NULL) {
+                        // If the user presses Alt when a tool window has focus,
+                        // transfer focus to the main window.
+                        sscheck(SetForegroundWindow(hParent));
+                        break;
+                    }
                 }
 
                 if(GetKeyState(VK_SHIFT) & 0x8000)
                     event.shiftDown = true;
                 if(GetKeyState(VK_CONTROL) & 0x8000)
                     event.controlDown = true;
+                if(GetKeyState(VK_MENU) & 0x8000)
+                    event.altDown = true;
 
                 if(wParam >= VK_F1 && wParam <= VK_F12) {
                     event.key = Platform::KeyboardEvent::Key::FUNCTION;
@@ -1011,19 +1026,6 @@ public:
                     window->onKeyboardEvent(event);
                 }
                 break;
-            }
-
-            case WM_SYSKEYDOWN: {
-                HWND hParent;
-                sscheck(hParent = GetParent(h));
-                if(hParent != NULL) {
-                    // If the user presses the Alt key when a tool window has focus,
-                    // then that should probably go to the main window instead.
-                    sscheck(SetForegroundWindow(hParent));
-                    break;
-                } else {
-                    return DefWindowProcW(h, msg, wParam, lParam);
-                }
             }
 
             case WM_VSCROLL: {

@@ -324,6 +324,9 @@ public:
         if(accel.controlDown) {
             accelMods |= Gdk::CONTROL_MASK;
         }
+        if(accel.altDown) {
+            accelMods |= Gdk::MOD1_MASK;
+        }
 
         gtkMenuItem.set_accel_key(Gtk::AccelKey(accelKey, accelMods));
     }
@@ -581,12 +584,13 @@ protected:
         event.type = type;
 
         Gdk::ModifierType mod_mask = get_modifier_mask(Gdk::MODIFIER_INTENT_DEFAULT_MOD_MASK);
-        if((gdk_event->state & mod_mask) & ~(GDK_SHIFT_MASK|GDK_CONTROL_MASK)) {
+        if((gdk_event->state & mod_mask) & ~(GDK_SHIFT_MASK|GDK_CONTROL_MASK|GDK_MOD1_MASK)) {
             return false;
         }
 
         event.shiftDown   = (gdk_event->state & GDK_SHIFT_MASK)   != 0;
         event.controlDown = (gdk_event->state & GDK_CONTROL_MASK) != 0;
+        event.altDown     = (gdk_event->state & GDK_MOD1_MASK)    != 0;
 
         char32_t chr = gdk_keyval_to_unicode(gdk_keyval_to_lower(gdk_event->keyval));
         if(chr != 0) {

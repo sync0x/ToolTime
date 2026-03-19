@@ -61,6 +61,11 @@ inline const char *C_(const char *msgctxt, const char *msgid) {
 // This table describes the top-level menus in the graphics window.
 enum class Command : uint32_t {
     NONE = 0,
+    // Auto
+    AUTO_SAVE_EXPORT = 90,
+    AUTO_LOAD_IMPORT,
+    AUTO_JAVASCRIPT,
+    AUTO_BRIDGE,
     // File
     NEW = 100,
     OPEN,

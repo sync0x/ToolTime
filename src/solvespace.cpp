@@ -667,6 +667,21 @@ void SolveSpaceUI::UpdateWindowTitles() {
     TW.window->SetTitle(C_("title", "Property Browser"));
 }
 
+void SolveSpaceUI::MenuAuto(Command id) {
+    switch(id) {
+        case Command::AUTO_SAVE_EXPORT:
+        case Command::AUTO_LOAD_IMPORT:
+        case Command::AUTO_JAVASCRIPT:
+        case Command::AUTO_BRIDGE:
+            Message(_("Not implemented."));
+            break;
+
+        default:
+            ssassert(false, "Unexpected menu ID");
+            break;
+    }
+}
+
 void SolveSpaceUI::MenuFile(Command id) {
     Platform::SettingsRef settings = Platform::GetSettings();
 
