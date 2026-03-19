@@ -62,7 +62,7 @@ static std::string PrepareMnemonics(std::string label) {
 }
 
 static std::string PrepareTitle(const std::string &title) {
-    return title + " — SolveSpace";
+    return title + " — ToolTime";
 }
 
 //-----------------------------------------------------------------------------

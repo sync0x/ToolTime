@@ -1098,6 +1098,9 @@ void SolveSpaceUI::MenuHelp(Command id) {
 "There is NO WARRANTY, to the extent permitted by\n"
 "law. For details, visit http://gnu.org/licenses/\n"
 "\n"
+"customisations by\n"
+"Andrew Sinclair <sync0x>\n"
+"\n"
 "© 2008-%d Jonathan Westhues and other authors.\n"),
 PACKAGE_VERSION, 2023);
             break;

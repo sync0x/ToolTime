@@ -130,7 +130,7 @@ BOOL ssAdjustWindowRectExForDpi(LPRECT lpRect, DWORD dwStyle, BOOL bMenu,
 //-----------------------------------------------------------------------------
 
 static std::wstring PrepareTitle(const std::string &s) {
-    return Widen("SolveSpace - " + s);
+    return Widen("ToolTime - " + s);
 }
 
 static std::string NegateMnemonics(const std::string &label) {
