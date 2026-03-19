@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# buildwin mkdir
+mkdir ToolTime_win && cd ToolTime_win && \
+cmake \
+  .. \
+  -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-mingw64.cmake \
+  -DCMAKE_BUILD_TYPE=Release && \
+make
