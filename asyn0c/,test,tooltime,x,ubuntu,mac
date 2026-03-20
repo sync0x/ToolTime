@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Cross-compile ToolTime on Linux for macOS using osxcross.
+#
+# Usage examples:
+#   ./asyn0c/,test,tooltime,x,ubuntu,mac
+#   MAC_ARCH=arm64 ./asyn0c/,test,tooltime,x,ubuntu,mac
+#   MAC_ARCH=x86_64 MACOSX_DEPLOYMENT_TARGET=11.0 ./asyn0c/,test,tooltime,x,ubuntu,mac
+
+build_dir="ToolTine_mac"
+build_type="Release"
+repo_root="$(cd "$(dirname "$0")/../.." && pwd)"
+
+MAC_ARCH="${MAC_ARCH:-x86_64}"            # x86_64 or arm64
+DARWIN_MAJOR="${DARWIN_MAJOR:-24}"        # macOS 15 ~= Darwin 24
+MACOSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET:-12.0}"
+
+OSXCROSS_ROOT="${OSXCROSS_ROOT:-}"
+if [ -z "${OSXCROSS_ROOT}" ]; then
+	echo "Set OSXCROSS_ROOT to your osxcross install path." >&2
+	echo "Example: export OSXCROSS_ROOT=/opt/osxcross" >&2
+	exit 1
+fi
+
+case "${MAC_ARCH}" in
+	x86_64)
+		TARGET_PREFIX="x86_64-apple-darwin${DARWIN_MAJOR}"
+		;;
+	arm64)
+		TARGET_PREFIX="aarch64-apple-darwin${DARWIN_MAJOR}"
+		;;
+	*)
+		echo "Unsupported MAC_ARCH='${MAC_ARCH}'. Use x86_64 or arm64." >&2
+		exit 1
+		;;
+esac
+
+CC="${OSXCROSS_ROOT}/target/bin/${TARGET_PREFIX}-clang"
+CXX="${OSXCROSS_ROOT}/target/bin/${TARGET_PREFIX}-clang++"
+AR="${OSXCROSS_ROOT}/target/bin/${TARGET_PREFIX}-ar"
+RANLIB="${OSXCROSS_ROOT}/target/bin/${TARGET_PREFIX}-ranlib"
+STRIP="${OSXCROSS_ROOT}/target/bin/${TARGET_PREFIX}-strip"
+
+for tool in "${CC}" "${CXX}" "${AR}" "${RANLIB}" "${STRIP}"; do
+	if [ ! -x "${tool}" ]; then
+		echo "Missing tool: ${tool}" >&2
+		echo "Check OSXCROSS_ROOT, DARWIN_MAJOR, and your osxcross build." >&2
+		exit 1
+	fi
+done
+
+SDK_PATH="${OSX_SDK_PATH:-}"
+if [ -z "${SDK_PATH}" ]; then
+	SDK_PATH="$(ls -d "${OSXCROSS_ROOT}"/target/SDK/MacOSX*.sdk 2>/dev/null | sort -V | tail -n1 || true)"
+fi
+
+if [ -z "${SDK_PATH}" ] || [ ! -d "${SDK_PATH}" ]; then
+	echo "Could not locate a macOS SDK under ${OSXCROSS_ROOT}/target/SDK." >&2
+	echo "Set OSX_SDK_PATH explicitly if needed." >&2
+	exit 1
+fi
+
+sdk_real="$(realpath "${SDK_PATH}")"
+if [[ "${sdk_real}" == "${repo_root}"/* ]]; then
+	echo "Refusing SDK path inside repository: ${sdk_real}" >&2
+	echo "Use an SDK path outside ${repo_root}." >&2
+	exit 1
+fi
+
+mkdir -p "${build_dir}"
+cd "${build_dir}"
+
+cat > toolchain-osxcross.cmake <<EOF
+set(CMAKE_SYSTEM_NAME Darwin)
+set(CMAKE_SYSTEM_PROCESSOR ${MAC_ARCH})
+
+set(CMAKE_C_COMPILER ${CC})
+set(CMAKE_CXX_COMPILER ${CXX})
+set(CMAKE_AR ${AR})
+set(CMAKE_RANLIB ${RANLIB})
+set(CMAKE_STRIP ${STRIP})
+
+set(CMAKE_OSX_SYSROOT ${SDK_PATH})
+set(CMAKE_OSX_ARCHITECTURES ${MAC_ARCH})
+set(CMAKE_OSX_DEPLOYMENT_TARGET ${MACOSX_DEPLOYMENT_TARGET})
+
+set(CMAKE_FIND_ROOT_PATH ${SDK_PATH})
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+EOF
+
+cmake \
+	.. \
+	-DCMAKE_TOOLCHAIN_FILE="$(pwd)/toolchain-osxcross.cmake" \
+	-DCMAKE_BUILD_TYPE="${build_type}" \
+	-DENABLE_OPENMP=OFF
+
+cmake --build . -j"$(nproc)"
+
+echo "Cross build complete: ${build_dir}/bin"

@@ -24,6 +24,11 @@
 .vscode/
 .playwright-mcp/
 
+# Local macOS SDK / osxcross safety guards
+/sdk*/
+/osxcross*/
+/*.sdk
+
 # Visual Studio
 out/
 .vs/
