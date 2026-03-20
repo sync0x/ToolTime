@@ -2,8 +2,6 @@
 /build*/
 /tooltime_*/
 /ToolTime_*/
-/ToolTine_*/
-/ToolTine_*/build/
 /ToolTime_*/build/
 !/ToolTime_win/
 /ToolTime_win/*

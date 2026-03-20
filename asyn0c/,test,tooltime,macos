@@ -25,7 +25,7 @@ elif [ "$2" = "x86_64" ]; then
     cd ToolTime_mac_amd64
 else
     mkdir ToolTime_mac_int64 || true
-    cd ToolTine_mac_int64
+    cd ToolTime_mac_int64
 fi
 
 if [ "$3" = "xcode" ]; then

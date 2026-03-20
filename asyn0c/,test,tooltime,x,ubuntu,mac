@@ -8,7 +8,7 @@ set -euo pipefail
 #   MAC_ARCH=arm64 ./asyn0c/,test,tooltime,x,ubuntu,mac
 #   MAC_ARCH=x86_64 MACOSX_DEPLOYMENT_TARGET=11.0 ./asyn0c/,test,tooltime,x,ubuntu,mac
 
-build_dir="ToolTine_mac"
+build_dir="ToolTime_mac"
 build_type="Release"
 repo_root="$(cd "$(dirname "$0")/../.." && pwd)"
 

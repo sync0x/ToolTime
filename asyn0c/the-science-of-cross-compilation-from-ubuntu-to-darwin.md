@@ -138,7 +138,7 @@ Script:
 Behavior implemented:
 
 - Linux -> macOS cross build via osxcross
-- Build directory fixed to: `ToolTine_mac` (as requested)
+- Build directory fixed to: `ToolTime_mac` (as requested)
 - Defaults to Darwin `24.5` to match built wrappers
 - Supports:
   - `MAC_ARCH=x86_64|arm64`
