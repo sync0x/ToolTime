@@ -62,6 +62,7 @@ target_compile_options(slvs_deps
 
 if(APPLE)
     target_link_libraries(slvs_deps INTERFACE
+    ${COREFOUNDATION_LIBRARY}
         ${APPKIT_LIBRARY})
 endif()
 
@@ -452,7 +453,7 @@ if(APPLE)
         add_custom_command(TARGET solvespace POST_BUILD
             COMMAND install_name_tool -change ${LIBOMP_LINK_PATH} ${LIBOMP_LINK_PATH_UTILS} $<TARGET_FILE:solvespace-testsuite>)
     endif()
-    if(ENABLE_CLI)
+    if(ENABLE_GUI AND ENABLE_CLI)
         add_custom_command(TARGET solvespace POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:solvespace-cli> $<TARGET_FILE_DIR:solvespace>
             COMMENT "Bundling executable solvespace-cli"

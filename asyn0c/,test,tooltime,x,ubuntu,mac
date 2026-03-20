@@ -13,7 +13,7 @@ build_type="Release"
 repo_root="$(cd "$(dirname "$0")/../.." && pwd)"
 
 MAC_ARCH="${MAC_ARCH:-x86_64}"            # x86_64 or arm64
-DARWIN_MAJOR="${DARWIN_MAJOR:-24}"        # macOS 15 ~= Darwin 24
+DARWIN_VERSION="${DARWIN_VERSION:-${DARWIN_MAJOR:-24.5}}"   # macOS 15 on this host => Darwin 24.5
 MACOSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET:-12.0}"
 
 OSXCROSS_ROOT="${OSXCROSS_ROOT:-}"
@@ -25,10 +25,10 @@ fi
 
 case "${MAC_ARCH}" in
 	x86_64)
-		TARGET_PREFIX="x86_64-apple-darwin${DARWIN_MAJOR}"
+		TARGET_PREFIX="x86_64-apple-darwin${DARWIN_VERSION}"
 		;;
 	arm64)
-		TARGET_PREFIX="aarch64-apple-darwin${DARWIN_MAJOR}"
+		TARGET_PREFIX="aarch64-apple-darwin${DARWIN_VERSION}"
 		;;
 	*)
 		echo "Unsupported MAC_ARCH='${MAC_ARCH}'. Use x86_64 or arm64." >&2
@@ -38,11 +38,12 @@ esac
 
 CC="${OSXCROSS_ROOT}/target/bin/${TARGET_PREFIX}-clang"
 CXX="${OSXCROSS_ROOT}/target/bin/${TARGET_PREFIX}-clang++"
+LD="${OSXCROSS_ROOT}/target/bin/${TARGET_PREFIX}-ld"
 AR="${OSXCROSS_ROOT}/target/bin/${TARGET_PREFIX}-ar"
 RANLIB="${OSXCROSS_ROOT}/target/bin/${TARGET_PREFIX}-ranlib"
 STRIP="${OSXCROSS_ROOT}/target/bin/${TARGET_PREFIX}-strip"
 
-for tool in "${CC}" "${CXX}" "${AR}" "${RANLIB}" "${STRIP}"; do
+for tool in "${CC}" "${CXX}" "${LD}" "${AR}" "${RANLIB}" "${STRIP}"; do
 	if [ ! -x "${tool}" ]; then
 		echo "Missing tool: ${tool}" >&2
 		echo "Check OSXCROSS_ROOT, DARWIN_MAJOR, and your osxcross build." >&2
@@ -54,6 +55,8 @@ SDK_PATH="${OSX_SDK_PATH:-}"
 if [ -z "${SDK_PATH}" ]; then
 	SDK_PATH="$(ls -d "${OSXCROSS_ROOT}"/target/SDK/MacOSX*.sdk 2>/dev/null | sort -V | tail -n1 || true)"
 fi
+
+export PATH="${OSXCROSS_ROOT}/target/bin:${PATH}"
 
 if [ -z "${SDK_PATH}" ] || [ ! -d "${SDK_PATH}" ]; then
 	echo "Could not locate a macOS SDK under ${OSXCROSS_ROOT}/target/SDK." >&2
@@ -77,6 +80,7 @@ set(CMAKE_SYSTEM_PROCESSOR ${MAC_ARCH})
 
 set(CMAKE_C_COMPILER ${CC})
 set(CMAKE_CXX_COMPILER ${CXX})
+set(CMAKE_LINKER ${LD})
 set(CMAKE_AR ${AR})
 set(CMAKE_RANLIB ${RANLIB})
 set(CMAKE_STRIP ${STRIP})

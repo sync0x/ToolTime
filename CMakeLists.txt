@@ -187,6 +187,7 @@ endif()
 
 if(APPLE)
     set(CMAKE_FIND_FRAMEWORK LAST)
+    find_library(COREFOUNDATION_LIBRARY CoreFoundation REQUIRED)
 endif()
 
 if(EMSCRIPTEN)
@@ -228,34 +229,64 @@ if(WIN32 OR APPLE OR EMSCRIPTEN)
     include(FindVendoredPackage)
     include(AddVendoredSubdirectory)
 
-    set(FORCE_VENDORED_ZLIB     ON)
-    set(FORCE_VENDORED_PNG      ON)
-    set(FORCE_VENDORED_Freetype ON)
+    if(NOT DEFINED FORCE_VENDORED_ZLIB)
+        set(FORCE_VENDORED_ZLIB ON)
+    endif()
+    if(NOT DEFINED FORCE_VENDORED_PNG)
+        set(FORCE_VENDORED_PNG ON)
+    endif()
+    if(NOT DEFINED FORCE_VENDORED_Freetype)
+        set(FORCE_VENDORED_Freetype ON)
+    endif()
 
-    find_vendored_package(ZLIB zlib
-        ZLIB_LIBRARY            zlibstatic
-        ZLIB_INCLUDE_DIR        ${CMAKE_SOURCE_DIR}/extlib/zlib)
-    list(APPEND ZLIB_INCLUDE_DIR ${CMAKE_BINARY_DIR}/extlib/zlib)
+    if(FORCE_VENDORED_ZLIB)
+        find_vendored_package(ZLIB zlib
+            ZLIB_LIBRARY            zlibstatic
+            ZLIB_INCLUDE_DIR        ${CMAKE_SOURCE_DIR}/extlib/zlib)
+        list(APPEND ZLIB_INCLUDE_DIR ${CMAKE_BINARY_DIR}/extlib/zlib)
+    else()
+        find_package(ZLIB REQUIRED)
+        if(NOT ZLIB_LIBRARY AND ZLIB_LIBRARIES)
+            set(ZLIB_LIBRARY ${ZLIB_LIBRARIES})
+        endif()
+    endif()
 
-    find_vendored_package(PNG libpng
-        SKIP_INSTALL_ALL        ON
-        PNG_LIBRARY             png_static
-        PNG_ARM_NEON            "off"
-        PNG_SHARED              OFF
-        PNG_STATIC              ON
-        PNG_EXECUTABLES         OFF
-        PNG_TESTS               OFF
-        PNG_FRAMEWORK           OFF
-        PNG_PNG_INCLUDE_DIR     ${CMAKE_SOURCE_DIR}/extlib/libpng)
-    list(APPEND PNG_PNG_INCLUDE_DIR ${CMAKE_BINARY_DIR}/extlib/libpng)
+    if(FORCE_VENDORED_PNG)
+        find_vendored_package(PNG libpng
+            SKIP_INSTALL_ALL        ON
+            PNG_LIBRARY             png_static
+            PNG_ARM_NEON            "off"
+            PNG_SHARED              OFF
+            PNG_STATIC              ON
+            PNG_EXECUTABLES         OFF
+            PNG_TESTS               OFF
+            PNG_FRAMEWORK           OFF
+            PNG_PNG_INCLUDE_DIR     ${CMAKE_SOURCE_DIR}/extlib/libpng)
+        list(APPEND PNG_PNG_INCLUDE_DIR ${CMAKE_BINARY_DIR}/extlib/libpng)
+    else()
+        find_package(PNG REQUIRED)
+        if(NOT PNG_LIBRARY AND PNG_LIBRARIES)
+            set(PNG_LIBRARY ${PNG_LIBRARIES})
+        endif()
+        if(NOT PNG_PNG_INCLUDE_DIR AND PNG_INCLUDE_DIRS)
+            set(PNG_PNG_INCLUDE_DIR ${PNG_INCLUDE_DIRS})
+        endif()
+    endif()
 
-    find_vendored_package(Freetype freetype
-        WITH_ZLIB               OFF
-        WITH_BZip2              OFF
-        WITH_PNG                OFF
-        WITH_HarfBuzz           OFF
-        FREETYPE_LIBRARY        freetype
-        FREETYPE_INCLUDE_DIRS   ${CMAKE_SOURCE_DIR}/extlib/freetype/include)
+    if(FORCE_VENDORED_Freetype)
+        find_vendored_package(Freetype freetype
+            WITH_ZLIB               OFF
+            WITH_BZip2              OFF
+            WITH_PNG                OFF
+            WITH_HarfBuzz           OFF
+            FREETYPE_LIBRARY        freetype
+            FREETYPE_INCLUDE_DIRS   ${CMAKE_SOURCE_DIR}/extlib/freetype/include)
+    else()
+        find_package(Freetype REQUIRED)
+        if(NOT FREETYPE_LIBRARY AND FREETYPE_LIBRARIES)
+            set(FREETYPE_LIBRARY ${FREETYPE_LIBRARIES})
+        endif()
+    endif()
 
     message(STATUS "Using in-tree pixman")
     set(PIXMAN_FOUND            YES)
