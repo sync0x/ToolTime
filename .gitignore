@@ -3,6 +3,12 @@
 /tooltime_*/
 /ToolTime_*/
 /ToolTime_*/build/
+!/ToolTime_mac/
+/ToolTime_mac/*
+!/ToolTime_mac/bin/
+/ToolTime_mac/bin/*
+!/ToolTime_mac/bin/SolveSpace.app/
+!/ToolTime_mac/bin/SolveSpace.app/**
 !/ToolTime_win/
 /ToolTime_win/*
 !/ToolTime_win/bin/

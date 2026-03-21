@@ -10,3 +10,5 @@
 *.slvs binary
 ToolTime_win/bin/*.exe filter=lfs diff=lfs merge=lfs -text
 ToolTime_win/bin/*.dll filter=lfs diff=lfs merge=lfs -text
+ToolTime_mac/bin/SolveSpace.app/Contents/MacOS/* filter=lfs diff=lfs merge=lfs -text
+ToolTime_mac/bin/SolveSpace.app/Contents/Frameworks/*.dylib filter=lfs diff=lfs merge=lfs -text

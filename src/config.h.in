@@ -1,7 +1,8 @@
 #ifndef SOLVESPACE_CONFIG_H
 #define SOLVESPACE_CONFIG_H
 
-#define PACKAGE_VERSION "@PROJECT_VERSION@~@solvespace_GIT_HASH@"
+#define PACKAGE_VERSION "@PROJECT_VERSION@"
+#define SNAPSHOT_VERSION "@GIT_COMMIT_DESCRIBE@"
 #define GIT_REVISION "@solvespace_GIT_HASH@"
 #define GIT_HASH_URL "https://github.com/solvespace/solvespace/commit/@solvespace_GIT_HASH@"
 

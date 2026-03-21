@@ -4,8 +4,8 @@ endif()
 
 function(get_git_commit_hash)
     get_filename_component(GIT_DESCRIBE_CMAKE_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
-    get_filename_component(GIT_ROOT ${GIT_DESCRIBE_CMAKE_DIR} PATH)
-    set(GIT_DIR "${GIT_ROOT}/.git")
+    get_filename_component(GIT_REPO_ROOT ${GIT_DESCRIBE_CMAKE_DIR} PATH)
+    set(GIT_DIR "${GIT_REPO_ROOT}/.git")
 
     if(NOT EXISTS "${GIT_DIR}/HEAD")
         message(WARNING "Cannot determine git HEAD: ${GIT_DIR}/HEAD is missing")
@@ -39,6 +39,18 @@ function(get_git_commit_hash)
         message(WARNING "Cannot determine git HEAD")
     else()
         set(GIT_COMMIT_HASH ${HEAD_REF} PARENT_SCOPE)
+
+        find_package(Git QUIET)
+        if(GIT_FOUND)
+            execute_process(
+                COMMAND "${GIT_EXECUTABLE}" -C "${GIT_REPO_ROOT}" describe --always --dirty --tags
+                OUTPUT_VARIABLE GIT_DESCRIBE
+                ERROR_QUIET
+                OUTPUT_STRIP_TRAILING_WHITESPACE)
+            if(NOT "${GIT_DESCRIBE}" STREQUAL "")
+                set(GIT_COMMIT_DESCRIBE ${GIT_DESCRIBE} PARENT_SCOPE)
+            endif()
+        endif()
     endif()
 endfunction()
 get_git_commit_hash()
