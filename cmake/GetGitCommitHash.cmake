@@ -1,7 +1,16 @@
+if(DEFINED GIT_COMMIT_HASH AND NOT "${GIT_COMMIT_HASH}" STREQUAL "")
+    return()
+endif()
+
 function(get_git_commit_hash)
     get_filename_component(GIT_DESCRIBE_CMAKE_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
     get_filename_component(GIT_ROOT ${GIT_DESCRIBE_CMAKE_DIR} PATH)
     set(GIT_DIR "${GIT_ROOT}/.git")
+
+    if(NOT EXISTS "${GIT_DIR}/HEAD")
+        message(WARNING "Cannot determine git HEAD: ${GIT_DIR}/HEAD is missing")
+        return()
+    endif()
 
     # Add a CMake configure dependency to the currently checked out revision.
     set(GIT_DEPENDS ${GIT_DIR}/HEAD)
