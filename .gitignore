@@ -28,7 +28,6 @@
 /debian/libslvs1-dev/
 /obj-*/
 /*.slvs
-.vscode/
 .playwright-mcp/
 
 # Local macOS SDK / osxcross safety guards

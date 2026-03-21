@@ -1,0 +1,9 @@
+{
+  "git.repositoryScanIgnoredFolders": [
+    "extlib/cairo",
+    "extlib/pixman",
+    "extlib/libdxfrw",
+    "extlib/eigen",
+    "extlib/mimalloc"
+  ]
+}

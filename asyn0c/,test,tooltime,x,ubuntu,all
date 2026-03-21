@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+set -eu
+
+script_dir="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+
+"${script_dir}/,test,tooltime,ubuntu"
+"${script_dir}/,test,tooltime,x,ubuntu,mac"
+"${script_dir}/,test,tooltime,x,ubuntu,win"

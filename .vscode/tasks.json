@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build ToolTime (all targets)",
+      "type": "shell",
+      "command": "${workspaceFolder}/asyn0c/,test,tooltime,x,ubuntu,all",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    }
+  ]
+}
