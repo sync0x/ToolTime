@@ -436,22 +436,30 @@ if(APPLE)
     set(LIBOMP_LIB_PATH ${OpenMP_CXX_INCLUDE_DIRS}/../lib/libomp.dylib)
     set(LIBOMP_LINK_PATH "@executable_path/../Resources/libomp.dylib")
     set(LIBOMP_LINK_PATH_UTILS "@executable_path/SolveSpace.app/Contents/Resources/libomp.dylib")
+    set(SOLVESPACE_BUNDLE_FRAMEWORKS_DIR $<TARGET_BUNDLE_CONTENT_DIR:solvespace>/Frameworks)
     if(ENABLE_GUI)
         add_custom_command(TARGET solvespace POST_BUILD
             COMMAND cp -r ${CMAKE_BINARY_DIR}/Resources $<TARGET_BUNDLE_CONTENT_DIR:solvespace>
         )
+        add_custom_command(TARGET solvespace POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${SOLVESPACE_BUNDLE_FRAMEWORKS_DIR}
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_BINARY_DIR}/bin/libz.1.dylib ${SOLVESPACE_BUNDLE_FRAMEWORKS_DIR}/libz.1.dylib
+            COMMAND ${CMAKE_INSTALL_NAME_TOOL} -id @rpath/libz.1.dylib ${SOLVESPACE_BUNDLE_FRAMEWORKS_DIR}/libz.1.dylib
+            COMMAND ${CMAKE_INSTALL_NAME_TOOL} -rpath ${CMAKE_BINARY_DIR}/bin @executable_path/../Frameworks $<TARGET_FILE:solvespace>
+            COMMENT "Bundling libz for SolveSpace.app and normalizing runtime search paths"
+            VERBATIM)
         if(ENABLE_OPENMP)
-            execute_process(COMMAND install_name_tool -id ${LIBOMP_LINK_PATH} ${LIBOMP_LIB_PATH})
+            execute_process(COMMAND ${CMAKE_INSTALL_NAME_TOOL} -id ${LIBOMP_LINK_PATH} ${LIBOMP_LIB_PATH})
             message("FROM " ${${LIBOMP_LIB_PATH}} "TO" $<TARGET_BUNDLE_CONTENT_DIR:solvespace>/Resources/libomp.dylib)
             add_custom_command(TARGET solvespace POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy ${LIBOMP_LIB_PATH} $<TARGET_BUNDLE_CONTENT_DIR:solvespace>/Resources/libomp.dylib
-                COMMAND install_name_tool -change ${LIBOMP_LINK_PATH} ${LIBOMP_LINK_PATH_UTILS} $<TARGET_FILE:solvespace-debugtool>
+                COMMAND ${CMAKE_INSTALL_NAME_TOOL} -change ${LIBOMP_LINK_PATH} ${LIBOMP_LINK_PATH_UTILS} $<TARGET_FILE:solvespace-debugtool>
             )
         endif()
     endif()
     if(ENABLE_TESTS AND ENABLE_OPENMP)
         add_custom_command(TARGET solvespace POST_BUILD
-            COMMAND install_name_tool -change ${LIBOMP_LINK_PATH} ${LIBOMP_LINK_PATH_UTILS} $<TARGET_FILE:solvespace-testsuite>)
+            COMMAND ${CMAKE_INSTALL_NAME_TOOL} -change ${LIBOMP_LINK_PATH} ${LIBOMP_LINK_PATH_UTILS} $<TARGET_FILE:solvespace-testsuite>)
     endif()
     if(ENABLE_GUI AND ENABLE_CLI)
         add_custom_command(TARGET solvespace POST_BUILD

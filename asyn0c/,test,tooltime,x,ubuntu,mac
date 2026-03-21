@@ -42,8 +42,9 @@ LD="${OSXCROSS_ROOT}/target/bin/${TARGET_PREFIX}-ld"
 AR="${OSXCROSS_ROOT}/target/bin/${TARGET_PREFIX}-ar"
 RANLIB="${OSXCROSS_ROOT}/target/bin/${TARGET_PREFIX}-ranlib"
 STRIP="${OSXCROSS_ROOT}/target/bin/${TARGET_PREFIX}-strip"
+INSTALL_NAME_TOOL="${OSXCROSS_ROOT}/target/bin/${TARGET_PREFIX}-install_name_tool"
 
-for tool in "${CC}" "${CXX}" "${LD}" "${AR}" "${RANLIB}" "${STRIP}"; do
+for tool in "${CC}" "${CXX}" "${LD}" "${AR}" "${RANLIB}" "${STRIP}" "${INSTALL_NAME_TOOL}"; do
 	if [ ! -x "${tool}" ]; then
 		echo "Missing tool: ${tool}" >&2
 		echo "Check OSXCROSS_ROOT, DARWIN_MAJOR, and your osxcross build." >&2
@@ -84,6 +85,7 @@ set(CMAKE_LINKER ${LD})
 set(CMAKE_AR ${AR})
 set(CMAKE_RANLIB ${RANLIB})
 set(CMAKE_STRIP ${STRIP})
+set(CMAKE_INSTALL_NAME_TOOL ${INSTALL_NAME_TOOL})
 
 set(CMAKE_OSX_SYSROOT ${SDK_PATH})
 set(CMAKE_OSX_ARCHITECTURES ${MAC_ARCH})
