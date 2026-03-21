@@ -1655,7 +1655,29 @@ std::vector<std::string> InitGui(int argc, char **argv) {
     // https://stackoverflow.com/questions/52154977/how-to-get-rid-of-enter-full-screen-menu-item
     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"NSFullScreenMenuItemEverywhere"];
 
-    [NSBundle.mainBundle loadNibNamed:@"MainMenu" owner:nil topLevelObjects:nil];
+    bool loadedMainMenuNib =
+        [NSBundle.mainBundle loadNibNamed:@"MainMenu" owner:nil topLevelObjects:nil];
+    if(!loadedMainMenuNib) {
+        dbp("WARNING: failed to load MainMenu nib; creating fallback menu bar.");
+
+        NSMenu *menuBar = [[NSMenu alloc] initWithTitle:@""];
+        NSMenuItem *appMenuItem = [[NSMenuItem alloc] initWithTitle:@"" action:nil keyEquivalent:@""];
+        [menuBar addItem:appMenuItem];
+
+        NSMenu *appMenu = [[NSMenu alloc] initWithTitle:@""];
+        NSString *appName = [NSProcessInfo processInfo].processName;
+        NSMenuItem *quitItem =
+            [[NSMenuItem alloc] initWithTitle:[@"Quit " stringByAppendingString:appName]
+                                       action:@selector(terminate:)
+                                keyEquivalent:@"q"];
+        [appMenu addItem:quitItem];
+        [menuBar setSubmenu:appMenu forItem:appMenuItem];
+        [NSApp setMainMenu:menuBar];
+    }
+
+    // In non-NSApplicationMain startup we must explicitly finish launching.
+    [NSApp finishLaunching];
+    [NSApp activateIgnoringOtherApps:YES];
 
     NSArray *languages = NSLocale.preferredLanguages;
     for(NSString *language in languages) {
