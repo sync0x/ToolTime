@@ -6,20 +6,9 @@
 //-----------------------------------------------------------------------------
 #include "solvespace.h"
 #include "config.h"
-#include <cstdlib>
-#include <cstring>
 
 SolveSpaceUI SolveSpace::SS = {};
 Sketch SolveSpace::SK = {};
-
-static bool IsMenuDebugEnabled() {
-    static int enabled = -1;
-    if(enabled == -1) {
-        const char *env = std::getenv("TOOLTIME_FILE_DIALOG_DEBUG");
-        enabled = (env != nullptr && std::strcmp(env, "0") != 0) ? 1 : 0;
-    }
-    return enabled == 1;
-}
 
 void SolveSpaceUI::Init() {
 #if !defined(HEADLESS)
@@ -572,33 +561,20 @@ void SolveSpaceUI::AddToRecentList(const Platform::Path &filename) {
 }
 
 bool SolveSpaceUI::GetFilenameAndSave(bool saveAs) {
-    if(IsMenuDebugEnabled()) {
-        dbp("[menu-file] GetFilenameAndSave enter saveAs=%d", saveAs ? 1 : 0);
-    }
-
     Platform::SettingsRef settings = Platform::GetSettings();
     Platform::Path newSaveFile = saveFile;
 
     if(saveAs || saveFile.IsEmpty()) {
         Platform::FileDialogRef dialog = Platform::CreateSaveFileDialog(GW.window);
-        // FIXME(emscripten):
-        dbp("Calling AddFilter()...");
         dialog->AddFilter(C_("file-type", "SolveSpace models"), { SKETCH_EXT });
-        dbp("Calling ThawChoices()...");
         dialog->ThawChoices(settings, "Sketch");
         if(!newSaveFile.IsEmpty()) {
-            dbp("Calling SetFilename()...");
             dialog->SetFilename(newSaveFile);
         }
-        dbp("Calling RunModal()...");
         if(dialog->RunModal()) {
-            dbp("Calling FreezeChoices()...");
             dialog->FreezeChoices(settings, "Sketch");
             newSaveFile = dialog->GetFilename();
         } else {
-            if(IsMenuDebugEnabled()) {
-                dbp("[menu-file] GetFilenameAndSave cancelled by dialog");
-            }
             return false;
         }
     }
@@ -611,14 +587,8 @@ bool SolveSpaceUI::GetFilenameAndSave(bool saveAs) {
         if (this->OnSaveFinished) {
             this->OnSaveFinished(newSaveFile, saveAs, false);
         }
-        if(IsMenuDebugEnabled()) {
-            dbp("[menu-file] GetFilenameAndSave success path=%s", newSaveFile.raw.c_str());
-        }
         return true;
     } else {
-        if(IsMenuDebugEnabled()) {
-            dbp("[menu-file] GetFilenameAndSave SaveToFile failed path=%s", newSaveFile.raw.c_str());
-        }
         return false;
     }
 }
@@ -794,10 +764,6 @@ void SolveSpaceUI::MenuAuto(Command id) {
 void SolveSpaceUI::MenuFile(Command id) {
     Platform::SettingsRef settings = Platform::GetSettings();
 
-    if(IsMenuDebugEnabled()) {
-        dbp("[menu-file] command=%d", (int)id);
-    }
-
     switch(id) {
         case Command::NEW:
             if(!SS.OkayToStartNewFile()) break;
@@ -821,15 +787,11 @@ void SolveSpaceUI::MenuFile(Command id) {
         }
 
         case Command::SAVE:
-            if(IsMenuDebugEnabled()) dbp("[menu-file] SAVE");
             SS.GetFilenameAndSave(/*saveAs=*/false);
             break;
 
         case Command::SAVE_AS:
-            if(IsMenuDebugEnabled()) dbp("[menu-file] SAVE_AS");
-            if(IsMenuDebugEnabled()) dbp("[menu-file] SAVE_AS before call");
             SS.GetFilenameAndSave(/*saveAs=*/true);
-            if(IsMenuDebugEnabled()) dbp("[menu-file] SAVE_AS after call");
             break;
 
         case Command::EXPORT_IMAGE: {

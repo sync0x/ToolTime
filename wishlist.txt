@@ -5,6 +5,7 @@ a request to import a plane thing
 make export assemble only contours in same group
 rotation of model view works about z of first point under cursor
 a way to kill a slow operation
+mac cross-build: generate or package MainMenu/SaveFormatAccessory nib resources on a mac host step
 
 -----
 rounding, as a special group

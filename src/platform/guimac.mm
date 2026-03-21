@@ -1609,7 +1609,7 @@ FileDialogRef CreateSaveFileDialog(WindowRef parentWindow) {
         [NSBundle.mainBundle pathForResource:@"SaveFormatAccessory" ofType:@"nib"];
     if(saveAccessoryNibPath == nil) {
         static bool warnedMissingSaveAccessoryNib = false;
-        if(!warnedMissingSaveAccessoryNib) {
+        if(IsFileDialogDebugEnabled() && !warnedMissingSaveAccessoryNib) {
             dbp("NOTE: SaveFormatAccessory.nib not present in app bundle; using default save panel.");
             warnedMissingSaveAccessoryNib = true;
         }
