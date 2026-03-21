@@ -273,9 +273,15 @@ if(WIN32 OR APPLE OR EMSCRIPTEN)
         endif()
     endif()
 
+    if(APPLE AND CMAKE_CROSSCOMPILING)
+        set(SLVS_FREETYPE_WITH_ZLIB ON)
+    else()
+        set(SLVS_FREETYPE_WITH_ZLIB OFF)
+    endif()
+
     if(FORCE_VENDORED_Freetype)
         find_vendored_package(Freetype freetype
-            WITH_ZLIB               OFF
+            WITH_ZLIB               ${SLVS_FREETYPE_WITH_ZLIB}
             WITH_BZip2              OFF
             WITH_PNG                OFF
             WITH_HarfBuzz           OFF
