@@ -5,6 +5,8 @@
 //-----------------------------------------------------------------------------
 #include "solvespace.h"
 #import  <AppKit/AppKit.h>
+#include <cstdlib>
+#include <cstring>
 
 using namespace SolveSpace;
 
@@ -61,6 +63,15 @@ static std::string PrepareMnemonics(std::string label) {
     // OS X does not support mnemonics
     label.erase(std::remove(label.begin(), label.end(), '&'), label.end());
     return label;
+}
+
+static bool IsFileDialogDebugEnabled() {
+    static int enabled = -1;
+    if(enabled == -1) {
+        const char *env = std::getenv("TOOLTIME_FILE_DIALOG_DEBUG");
+        enabled = (env != nullptr && std::strcmp(env, "0") != 0) ? 1 : 0;
+    }
+    return enabled == 1;
 }
 
 //-----------------------------------------------------------------------------
@@ -1428,17 +1439,65 @@ public:
     }
 
     void FreezeChoices(SettingsRef settings, const std::string &key) override {
+        NSString *directory = nsPanel.directoryURL.path;
+        if(directory == nil && nsPanel.URL != nil) {
+            directory = nsPanel.URL.URLByDeletingLastPathComponent.path;
+        }
+        if(directory == nil) {
+            directory = @"";
+        }
+
+        if(IsFileDialogDebugEnabled()) {
+            dbp("[mac-dialog] FreezeChoices key=%s folder=%s", key.c_str(), [directory UTF8String]);
+        }
+
         settings->FreezeString("Dialog_" + key + "_Folder",
-                               [nsPanel.directoryURL.absoluteString UTF8String]);
+                               [directory UTF8String]);
     }
 
     void ThawChoices(SettingsRef settings, const std::string &key) override {
-        nsPanel.directoryURL =
-            [NSURL URLWithString:Wrap(settings->ThawString("Dialog_" + key + "_Folder", ""))];
+        NSString *savedFolder = Wrap(settings->ThawString("Dialog_" + key + "_Folder", ""));
+        if(savedFolder.length == 0) {
+            if(IsFileDialogDebugEnabled()) {
+                dbp("[mac-dialog] ThawChoices key=%s folder=<empty>", key.c_str());
+            }
+            return;
+        }
+
+        NSURL *directoryURL = nil;
+        if([savedFolder hasPrefix:@"file://"]) {
+            directoryURL = [NSURL URLWithString:savedFolder];
+        } else {
+            directoryURL = [NSURL fileURLWithPath:savedFolder isDirectory:YES];
+        }
+
+        if(IsFileDialogDebugEnabled()) {
+            dbp("[mac-dialog] ThawChoices key=%s folder_raw=%s url=%s",
+                key.c_str(), [savedFolder UTF8String],
+                directoryURL != nil ? [directoryURL.absoluteString UTF8String] : "<nil>");
+        }
+
+        if(directoryURL != nil) {
+            nsPanel.directoryURL = directoryURL;
+        }
     }
 
     bool RunModal() override {
-        if([nsPanel runModal] == NSModalResponseOK) {
+        if(IsFileDialogDebugEnabled()) {
+            dbp("[mac-dialog] RunModal begin panel=%p dir=%s name=%s",
+                (__bridge void *)nsPanel,
+                nsPanel.directoryURL != nil ? [nsPanel.directoryURL.absoluteString UTF8String] : "<nil>",
+                [nsPanel.nameFieldStringValue UTF8String]);
+        }
+
+        NSInteger response = [nsPanel runModal];
+        if(IsFileDialogDebugEnabled()) {
+            dbp("[mac-dialog] RunModal end panel=%p response=%ld url=%s",
+                (__bridge void *)nsPanel, (long)response,
+                nsPanel.URL != nil ? [nsPanel.URL.absoluteString UTF8String] : "<nil>");
+        }
+
+        if(response == NSModalResponseOK) {
             return true;
         } else {
             return false;
@@ -1487,21 +1546,31 @@ public:
             desc += extension;
         }
         std::string title = name + " (" + desc + ")";
-        if(nsFilters.count == 1) {
+        if(ssAccessory != nil && nsFilters.count == 1) {
             [ssAccessory.button removeAllItems];
         }
-        [ssAccessory.button addItemWithTitle:Wrap(title)];
-        [ssAccessory.button synchronizeTitleAndSelectedItem];
+        if(ssAccessory != nil) {
+            [ssAccessory.button addItemWithTitle:Wrap(title)];
+            [ssAccessory.button synchronizeTitleAndSelectedItem];
+        }
+
+        if(IsFileDialogDebugEnabled()) {
+            dbp("[mac-dialog] Save AddFilter title=%s ext_count=%d total_filters=%d accessory=%s",
+                title.c_str(), (int)extensions.size(), (int)nsFilters.count,
+                ssAccessory != nil ? "yes" : "no");
+        }
     }
 
     void FreezeChoices(SettingsRef settings, const std::string &key) override {
         FileDialogImplCocoa::FreezeChoices(settings, key);
-        settings->FreezeInt("Dialog_" + key + "_Filter", ssAccessory.index);
+        settings->FreezeInt("Dialog_" + key + "_Filter", (ssAccessory != nil) ? ssAccessory.index : 0);
     }
 
     void ThawChoices(SettingsRef settings, const std::string &key) override {
         FileDialogImplCocoa::ThawChoices(settings, key);
-        ssAccessory.index = settings->ThawInt("Dialog_" + key + "_Filter", 0);
+        if(ssAccessory != nil) {
+            ssAccessory.index = settings->ThawInt("Dialog_" + key + "_Filter", 0);
+        }
     }
 
     bool RunModal() override {
@@ -1524,6 +1593,10 @@ FileDialogRef CreateOpenFileDialog(WindowRef parentWindow) {
     std::shared_ptr<OpenFileDialogImplCocoa> dialog = std::make_shared<OpenFileDialogImplCocoa>();
     dialog->nsPanel = nsPanel;
 
+    if(IsFileDialogDebugEnabled()) {
+        dbp("[mac-dialog] CreateOpenFileDialog panel=%p", (__bridge void *)nsPanel);
+    }
+
     return dialog;
 }
 
@@ -1531,15 +1604,51 @@ FileDialogRef CreateSaveFileDialog(WindowRef parentWindow) {
     NSSavePanel *nsPanel = [NSSavePanel savePanel];
     nsPanel.canSelectHiddenExtension = YES;
 
-    SSSaveFormatAccessory *ssAccessory =
-        [[SSSaveFormatAccessory alloc] initWithNibName:@"SaveFormatAccessory" bundle:nil];
-    ssAccessory.panel = nsPanel;
-    nsPanel.accessoryView = [ssAccessory view];
+    SSSaveFormatAccessory *ssAccessory = nil;
+    NSString *saveAccessoryNibPath =
+        [NSBundle.mainBundle pathForResource:@"SaveFormatAccessory" ofType:@"nib"];
+    if(saveAccessoryNibPath == nil) {
+        static bool warnedMissingSaveAccessoryNib = false;
+        if(!warnedMissingSaveAccessoryNib) {
+            dbp("NOTE: SaveFormatAccessory.nib not present in app bundle; using default save panel.");
+            warnedMissingSaveAccessoryNib = true;
+        }
+        if(IsFileDialogDebugEnabled()) {
+            dbp("[mac-dialog] CreateSaveFileDialog accessory unavailable panel=%p", (__bridge void *)nsPanel);
+        }
+    } else {
+        @try {
+            ssAccessory = [[SSSaveFormatAccessory alloc] initWithNibName:@"SaveFormatAccessory" bundle:nil];
+            NSView *accessoryView = [ssAccessory view];
+            if(accessoryView != nil) {
+                ssAccessory.panel = nsPanel;
+                nsPanel.accessoryView = accessoryView;
+                if(IsFileDialogDebugEnabled()) {
+                    dbp("[mac-dialog] CreateSaveFileDialog loaded SaveFormatAccessory nib panel=%p", (__bridge void *)nsPanel);
+                }
+            } else {
+                dbp("WARNING: failed to load SaveFormatAccessory nib; using default save panel.");
+                ssAccessory = nil;
+                if(IsFileDialogDebugEnabled()) {
+                    dbp("[mac-dialog] CreateSaveFileDialog accessory missing panel=%p", (__bridge void *)nsPanel);
+                }
+            }
+        } @catch(NSException *ex) {
+            dbp("WARNING: exception while loading SaveFormatAccessory nib (%s); using default save panel.",
+                [[ex description] UTF8String]);
+            ssAccessory = nil;
+            if(IsFileDialogDebugEnabled()) {
+                dbp("[mac-dialog] CreateSaveFileDialog accessory exception panel=%p", (__bridge void *)nsPanel);
+            }
+        }
+    }
 
     std::shared_ptr<SaveFileDialogImplCocoa> dialog = std::make_shared<SaveFileDialogImplCocoa>();
     dialog->nsPanel = nsPanel;
     dialog->ssAccessory = ssAccessory;
-    ssAccessory.filters = dialog->nsFilters;
+    if(ssAccessory != nil) {
+        ssAccessory.filters = dialog->nsFilters;
+    }
 
     return dialog;
 }
@@ -1680,11 +1789,23 @@ std::vector<std::string> InitGui(int argc, char **argv) {
     [NSApp activateIgnoringOtherApps:YES];
 
     NSArray *languages = NSLocale.preferredLanguages;
+    bool localeMatched = false;
     for(NSString *language in languages) {
-        if(SolveSpace::SetLocale([language UTF8String])) break;
+        const char *lang = [language UTF8String];
+        bool matched = SolveSpace::SetLocale(lang);
+        if(IsFileDialogDebugEnabled()) {
+            dbp("[mac-locale] try %s -> %s", lang, matched ? "matched" : "no-match");
+        }
+        if(matched) {
+            localeMatched = true;
+            break;
+        }
     }
-    if(languages.count == 0) {
-        SolveSpace::SetLocale("en_US");
+    if(!localeMatched) {
+        bool fallback = SolveSpace::SetLocale("en_US");
+        if(IsFileDialogDebugEnabled()) {
+            dbp("[mac-locale] fallback en_US -> %s", fallback ? "matched" : "no-match");
+        }
     }
 
     return args;
