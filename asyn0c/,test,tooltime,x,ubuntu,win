@@ -3,6 +3,9 @@ set -euo pipefail
 
 repo_root="$(cd "$(dirname "$0")/../.." && pwd)"
 angle_dir="$repo_root/extlib/angle"
+build_dir="ToolTime_win"
+RSYNC_SOURCE="${RSYNC_SOURCE:-${repo_root}/}"
+RSYNC_DEST="${RSYNC_DEST:-sync0x@LittleJohn.z.asyn0c.net:~/ToolTime/}"
 
 ensure_angle_submodule() {
   if [ -f "$angle_dir/CMakeLists.txt" ]; then
@@ -23,10 +26,16 @@ ensure_angle_submodule() {
 
 ensure_angle_submodule
 
-# buildwin mkdir
-mkdir ToolTime_win && cd ToolTime_win && \
+mkdir -p "${build_dir}"
+cd "${build_dir}"
+
 cmake \
   .. \
   -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-mingw64.cmake \
-  -DCMAKE_BUILD_TYPE=Release && \
+  -DCMAKE_BUILD_TYPE=Release
+
 make
+
+rsync --update --archive --delete --exclude '.git' "${RSYNC_SOURCE}" "${RSYNC_DEST}"
+
+echo "Sync complete: ${RSYNC_SOURCE} -> ${RSYNC_DEST}"

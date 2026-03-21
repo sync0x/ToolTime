@@ -11,6 +11,8 @@ set -euo pipefail
 build_dir="ToolTime_mac"
 build_type="Release"
 repo_root="$(cd "$(dirname "$0")/../.." && pwd)"
+RSYNC_SOURCE="${RSYNC_SOURCE:-${repo_root}/}"
+RSYNC_DEST="${RSYNC_DEST:-cccc@LittlePaul.z.aSyn0c.net:~/ToolTime/}"
 
 MAC_ARCH="${MAC_ARCH:-x86_64}"            # x86_64 or arm64
 DARWIN_VERSION="${DARWIN_VERSION:-${DARWIN_MAJOR:-24.5}}"   # macOS 15 on this host => Darwin 24.5
@@ -107,3 +109,7 @@ cmake \
 cmake --build . -j"$(nproc)"
 
 echo "Cross build complete: ${build_dir}/bin"
+
+rsync --update --archive --delete --exclude '.git' "${RSYNC_SOURCE}" "${RSYNC_DEST}"
+
+echo "Sync complete: ${RSYNC_SOURCE} -> ${RSYNC_DEST}"
