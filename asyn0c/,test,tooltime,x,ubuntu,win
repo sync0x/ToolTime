@@ -1,4 +1,28 @@
 #!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "$0")/../.." && pwd)"
+angle_dir="$repo_root/extlib/angle"
+
+ensure_angle_submodule() {
+  if [ -f "$angle_dir/CMakeLists.txt" ]; then
+    return
+  fi
+
+  if [ -d "$repo_root/.git" ] && command -v git >/dev/null 2>&1; then
+    echo "Initializing pinned ANGLE submodule for Windows build..."
+    git -C "$repo_root" submodule update --init extlib/angle
+  fi
+
+  if [ ! -f "$angle_dir/CMakeLists.txt" ]; then
+    echo "Windows build requires extlib/angle at the pinned submodule revision." >&2
+    echo "Run: git submodule update --init extlib/angle" >&2
+    exit 1
+  fi
+}
+
+ensure_angle_submodule
+
 # buildwin mkdir
 mkdir ToolTime_win && cd ToolTime_win && \
 cmake \

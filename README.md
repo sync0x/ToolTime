@@ -82,10 +82,13 @@ Irrespective of the OS used, before building, check out the project and the
 necessary submodules:
 
 ```sh
-git clone https://github.com/solvespace/solvespace
+git clone --recurse-submodules https://github.com/solvespace/solvespace
 cd solvespace
 git submodule update --init
 ```
+
+Windows GUI builds require the pinned `extlib/angle` submodule. Linux and macOS
+CLI-only workflows do not use `angle`.
 
 You will need `git`. See the platform specific instructions below to install it.
 
@@ -281,6 +284,13 @@ If gawk is in your path be sure it is a proper Windows port that can handle CL L
 If not CMake may fail in libpng due to some awk scripts - issue #1228.
 
 Before building, [check out the project and the necessary submodules](#via-source-code).
+
+If `extlib/angle` was not populated during the initial clone, initialize it before
+building on Windows:
+
+```sh
+git submodule update --init extlib/angle
+```
 
 ### Building with Visual Studio IDE
 
