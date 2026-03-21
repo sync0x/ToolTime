@@ -1181,6 +1181,9 @@ void SolveSpaceUI::MenuHelp(Command id) {
 
         case Command::ABOUT:
             Message(_(
+"Build: %s %s\n"
+"Git revision: %s\n"
+"\n"
 "This is SolveSpace version %s.\n"
 "\n"
 "For more information, see http://solvespace.com/\n"
@@ -1196,7 +1199,7 @@ void SolveSpaceUI::MenuHelp(Command id) {
 "Andrew Sinclair <sync0x>\n"
 "\n"
 "© 2008-%d Jonathan Westhues and other authors.\n"),
-PACKAGE_VERSION, 2023);
+__DATE__, __TIME__, GIT_REVISION, PACKAGE_VERSION, 2023);
             break;
 
         case Command::GITHUB:

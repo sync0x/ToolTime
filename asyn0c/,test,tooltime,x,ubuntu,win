@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-repo_root="$(cd "$(dirname "$0")/../.." && pwd)"
+repo_root="$(cd "$(dirname "$0")/.." && pwd)"
 angle_dir="$repo_root/extlib/angle"
 build_dir="ToolTime_win"
 RSYNC_SOURCE="${RSYNC_SOURCE:-${repo_root}/}"

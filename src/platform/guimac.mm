@@ -1743,6 +1743,7 @@ namespace SolveSpace {
 namespace Platform {
 
 static SSApplicationDelegate *ssDelegate;
+static std::shared_ptr<MenuImplCocoa> fallbackAppMenu;
 
 std::vector<std::string> InitGui(int argc, char **argv) {
     std::vector<std::string> args = InitCli(argc, argv);
@@ -1773,8 +1774,33 @@ std::vector<std::string> InitGui(int argc, char **argv) {
         NSMenuItem *appMenuItem = [[NSMenuItem alloc] initWithTitle:@"" action:nil keyEquivalent:@""];
         [menuBar addItem:appMenuItem];
 
-        NSMenu *appMenu = [[NSMenu alloc] initWithTitle:@""];
         NSString *appName = [NSProcessInfo processInfo].processName;
+        std::string aboutLabel = "About ";
+        aboutLabel += [appName UTF8String];
+
+        fallbackAppMenu = std::make_shared<MenuImplCocoa>();
+        fallbackAppMenu->AddItem(aboutLabel, []() {
+            SS.MenuHelp(Command::ABOUT);
+        }, /*mnemonics=*/false);
+        fallbackAppMenu->AddSeparator();
+
+        NSMenu *appMenu = fallbackAppMenu->nsMenu;
+        [appMenu addItemWithTitle:[@"Hide " stringByAppendingString:appName]
+                           action:@selector(hide:)
+                    keyEquivalent:@"h"];
+
+        NSMenuItem *hideOthersItem =
+            [appMenu addItemWithTitle:@"Hide Others"
+                               action:@selector(hideOtherApplications:)
+                        keyEquivalent:@"h"];
+        hideOthersItem.keyEquivalentModifierMask =
+            NSEventModifierFlagCommand | NSEventModifierFlagOption;
+
+        [appMenu addItemWithTitle:@"Show All"
+                           action:@selector(unhideAllApplications:)
+                    keyEquivalent:@""];
+        [appMenu addItem:[NSMenuItem separatorItem]];
+
         NSMenuItem *quitItem =
             [[NSMenuItem alloc] initWithTitle:[@"Quit " stringByAppendingString:appName]
                                        action:@selector(terminate:)

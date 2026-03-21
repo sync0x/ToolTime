@@ -10,7 +10,7 @@ set -euo pipefail
 
 build_dir="ToolTime_mac"
 build_type="Release"
-repo_root="$(cd "$(dirname "$0")/../.." && pwd)"
+repo_root="$(cd "$(dirname "$0")/.." && pwd)"
 RSYNC_SOURCE="${RSYNC_SOURCE:-${repo_root}/}"
 RSYNC_DEST="${RSYNC_DEST:-cccc@LittlePaul.z.aSyn0c.net:~/ToolTime/}"
 
