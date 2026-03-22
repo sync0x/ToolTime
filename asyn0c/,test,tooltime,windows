@@ -22,8 +22,8 @@ ensure_angle_submodule() {
 
 ensure_angle_submodule
 
-mkdir ToolTime_win
-cd ToolTime_win
+mkdir ToolTime_win_msvc
+cd ToolTime_win_msvc
 
 if [ "$1" = "release" ]; then
     if [ "$2" = "openmp" ]; then

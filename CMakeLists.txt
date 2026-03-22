@@ -94,6 +94,10 @@ endif()
 if(MINGW)
     set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -static-libgcc")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++")
+    # Some vendored dependency interfaces may still contribute plain
+    # `-l<name>` tokens (e.g. -lzlibstatic). Ensure the build output
+    # directory is in the link search path for MinGW executables.
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -L${CMAKE_BINARY_DIR}/bin")
     # Link 32 bit SolveSpace with --large-address-aware which allows it to access
     # up to 3GB on a properly configured 32 bit Windows and up to 4GB on 64 bit.
     # See https://msdn.microsoft.com/en-us/library/aa366778
@@ -247,6 +251,23 @@ if(WIN32 OR APPLE OR EMSCRIPTEN)
             ZLIB_LIBRARY            zlibstatic
             ZLIB_INCLUDE_DIR        ${CMAKE_SOURCE_DIR}/extlib/zlib)
         list(APPEND ZLIB_INCLUDE_DIR ${CMAKE_BINARY_DIR}/extlib/zlib)
+
+        # Some vendored consumers still pass a plain `-lzlibstatic` token on
+        # MinGW. Ensure the produced static archive name matches that token.
+        if(WIN32 AND MINGW AND TARGET zlibstatic)
+            set_target_properties(zlibstatic PROPERTIES OUTPUT_NAME zlibstatic)
+        endif()
+
+        # Prefer resolving vendored zlib to its produced archive path, to
+        # avoid passing a raw library token (e.g. "zlibstatic") to MinGW.
+        if(TARGET zlibstatic)
+            set(ZLIB_LIBRARY "$<TARGET_FILE:zlibstatic>")
+            if(WIN32 AND MINGW)
+                set(ZLIB_LIBRARY "$<TARGET_FILE:zlibstatic>" CACHE INTERNAL "" FORCE)
+            endif()
+        elseif(TARGET ZLIB::ZLIBSTATIC)
+            set(ZLIB_LIBRARY "$<TARGET_FILE:ZLIB::ZLIBSTATIC>")
+        endif()
     else()
         find_package(ZLIB REQUIRED)
         if(NOT ZLIB_LIBRARY AND ZLIB_LIBRARIES)
@@ -266,6 +287,21 @@ if(WIN32 OR APPLE OR EMSCRIPTEN)
             PNG_FRAMEWORK           OFF
             PNG_PNG_INCLUDE_DIR     ${CMAKE_SOURCE_DIR}/extlib/libpng)
         list(APPEND PNG_PNG_INCLUDE_DIR ${CMAKE_BINARY_DIR}/extlib/libpng)
+
+        # On MinGW, libpng can propagate a raw `zlibstatic` token via its
+        # interface link libraries. Rewrite that to the concrete archive path
+        # so the final executable link does not fail with "cannot find
+        # zlibstatic".
+        if(WIN32 AND MINGW AND TARGET png_static AND TARGET zlibstatic)
+            get_target_property(PNG_IFACE_LIBS png_static INTERFACE_LINK_LIBRARIES)
+            if(PNG_IFACE_LIBS)
+                string(REPLACE "zlibstatic" "$<TARGET_FILE:zlibstatic>" PNG_IFACE_LIBS "${PNG_IFACE_LIBS}")
+                set_property(TARGET png_static PROPERTY
+                    INTERFACE_LINK_LIBRARIES "${PNG_IFACE_LIBS}")
+            endif()
+            set(PNG_LIBRARY "$<TARGET_FILE:png_static>" CACHE INTERNAL "" FORCE)
+            unset(PNG_IFACE_LIBS)
+        endif()
     else()
         find_package(PNG REQUIRED)
         if(NOT PNG_LIBRARY AND PNG_LIBRARIES)
@@ -343,8 +379,10 @@ if(ENABLE_GUI)
             find_package(OpenGL REQUIRED)
         endif()
 
-        if(MSVC AND ${CMAKE_SIZEOF_VOID_P} EQUAL 4)
-            message(STATUS "Using prebuilt SpaceWare")
+        if(${CMAKE_SIZEOF_VOID_P} EQUAL 4 AND
+           EXISTS "${CMAKE_SOURCE_DIR}/extlib/si/siapp.h" AND
+           EXISTS "${CMAKE_SOURCE_DIR}/extlib/si/siapp.lib")
+            message(STATUS "Using prebuilt 32-bit SpaceWare SDK")
             set(SPACEWARE_FOUND TRUE)
             set(SPACEWARE_INCLUDE_DIR
                 "${CMAKE_SOURCE_DIR}/extlib/si")

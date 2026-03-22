@@ -29,13 +29,25 @@ target_include_directories(slvs_deps INTERFACE SYSTEM
     ${CAIRO_INCLUDE_DIRS}
     ${MIMALLOC_INCLUDE_DIR}
     ${EIGEN3_INCLUDE_DIRS})
-target_link_libraries(slvs_deps INTERFACE
-    dxfrw
-    ${ZLIB_LIBRARY}
-    ${PNG_LIBRARY}
-    ${FREETYPE_LIBRARY}
-    ${CAIRO_LIBRARIES}
-    mimalloc-static)
+if(WIN32 AND MINGW)
+    # For GNU ld with static archives, providers must follow users.
+    # libpng references zlib, so keep zlib after png.
+    target_link_libraries(slvs_deps INTERFACE
+        dxfrw
+        ${PNG_LIBRARY}
+        ${ZLIB_LIBRARY}
+        ${FREETYPE_LIBRARY}
+        ${CAIRO_LIBRARIES}
+        mimalloc-static)
+else()
+    target_link_libraries(slvs_deps INTERFACE
+        dxfrw
+        ${ZLIB_LIBRARY}
+        ${PNG_LIBRARY}
+        ${FREETYPE_LIBRARY}
+        ${CAIRO_LIBRARIES}
+        mimalloc-static)
+endif()
 
 if(Backtrace_FOUND)
     target_include_directories(slvs_deps INTERFACE SYSTEM
@@ -294,6 +306,26 @@ if(ENABLE_GUI)
             platform/guiwin.cpp)
 
         target_link_libraries(solvespace PRIVATE comctl32)
+
+        # For MinGW builds, prefer static winpthread to avoid requiring
+        # libwinpthread-1.dll at runtime.
+        if(MINGW)
+            target_link_options(solvespace PRIVATE -Wl,-Bstatic -lwinpthread -Wl,-Bdynamic)
+
+            # Also stage common MinGW runtime DLLs into ${CMAKE_BINARY_DIR}/bin
+            # so the executable runs directly on Windows hosts.
+            get_filename_component(MINGW_BIN_DIR "${CMAKE_CXX_COMPILER}" DIRECTORY)
+            set(SLVS_MINGW_RUNTIME_DLLS
+                libwinpthread-1.dll
+                libgcc_s_dw2-1.dll
+                libstdc++-6.dll)
+            file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+            foreach(SLVS_DLL ${SLVS_MINGW_RUNTIME_DLLS})
+                if(EXISTS "${MINGW_BIN_DIR}/${SLVS_DLL}")
+                    file(COPY "${MINGW_BIN_DIR}/${SLVS_DLL}" DESTINATION "${CMAKE_BINARY_DIR}/bin")
+                endif()
+            endforeach()
+        endif()
     elseif(APPLE)
         target_compile_options(solvespace PRIVATE -fobjc-arc)
         target_compile_definitions(solvespace PRIVATE GL_SILENCE_DEPRECATION)
