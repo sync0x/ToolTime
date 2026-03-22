@@ -16,6 +16,30 @@ static void DrwPushOwned(std::vector<std::shared_ptr<T>> &container, T *value) {
     container.emplace_back(value);
 }
 
+static std::string ExportLayerToken(const std::string &name) {
+    std::string out;
+    out.reserve(name.size());
+
+    for(char c : name) {
+        if(std::isalnum((unsigned char)c)) {
+            out.push_back(c);
+        } else {
+            out.push_back('_');
+        }
+    }
+
+    return out;
+}
+
+static std::string ExportLayerNameForStyle(hStyle hs) {
+    Style *s = Style::Get(hs);
+    std::string token = ExportLayerToken(s->name);
+    if(token.empty()) {
+        token = "unnamed";
+    }
+    return ssprintf("s%03x_%s", hs.v, token.c_str());
+}
+
 //-----------------------------------------------------------------------------
 // Routines for DXF export
 //-----------------------------------------------------------------------------
@@ -58,8 +82,7 @@ public:
         }
 
         for(uint32_t v : usedStyles) {
-            Style *s = Style::Get(hStyle{v});
-            layer.name = s->DescriptionString();
+            layer.name = ExportLayerNameForStyle(hStyle{v});
             dxf->writeLayer(&layer);
         }
     }
@@ -337,7 +360,7 @@ public:
         RgbaColor color = Style::Color(hs, /*forExport=*/true);
         entity->color24 = color.ToPackedIntBGRA();
         entity->color = findDxfColor(color);
-        entity->layer = s->DescriptionString();
+        entity->layer = ExportLayerNameForStyle(hs);
         entity->lineType = DxfFileWriter::lineTypeName(s->stippleType);
         entity->ltypeScale = Style::StippleScaleMm(s->h);
         entity->setWidthMm(Style::WidthMm(hs.v));
@@ -1069,39 +1092,8 @@ void PdfFileWriter::Bezier(SBezier *sb) {
 //-----------------------------------------------------------------------------
 // Routines for SVG output
 //-----------------------------------------------------------------------------
-static std::string SvgSystemFallbackLayerName(uint32_t styleHandle) {
-    switch(styleHandle) {
-        case 0: return "#references";
-        case 1: return "active_group";
-        case 2: return "inactive_group";
-        case 6: return "dimensions";
-        default:
-            if(styleHandle < 0x100) {
-                return ssprintf("system_s%x", styleHandle);
-            }
-            return "";
-    }
-}
-
-static bool SvgHasDefaultStyleNamePrefix(const std::string &name) {
-    return name.rfind("#def-", 0) == 0;
-}
-
 static std::string SvgLayerNameForStyle(hStyle hs) {
-    Style *s = Style::Get(hs);
-    if(!s->name.empty() && !SvgHasDefaultStyleNamePrefix(s->name)) {
-        return s->name;
-    }
-
-    std::string fallback = SvgSystemFallbackLayerName(hs.v);
-    if(!fallback.empty()) {
-        return fallback;
-    }
-
-    if(!s->name.empty()) {
-        return s->name;
-    }
-    return ssprintf("s%x", hs.v);
+    return ExportLayerNameForStyle(hs);
 }
 
 static std::string SvgLayerId(const std::string &layerName, uint32_t styleHandle) {
