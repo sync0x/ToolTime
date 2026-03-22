@@ -1,15 +1,17 @@
-# SVG Export Layer Naming — User Preference via Property Browser
+# Export Layer Naming — User Preference via Property Browser
 
 ## Purpose and Motivation
 
-The SVG layer naming convention (old: `s%03x-name` / new: bare `name`) must be a
-**persistent per-installation preference**, not a per-file setting.  The choice affects
-every SVG export from that workstation and must survive application restarts.
+The export layer naming strategy must be a **persistent per-installation preference**,
+not a per-file setting. The choice affects every DXF/SVG export from that workstation and
+must survive application restarts.
 
-Downstream consumers that perform exact-string matching on SVG layer labels — the
-Kongsberg plotter and the Illustrator conversion script — will silently fail if the
-naming convention changes between sessions.  The user must be able to set the convention
-once and never think about it again.
+The preference space is intentionally reduced to **exactly two modes**:
+
+1. **Style number ON** (`s%03d_...`)
+2. **Style number OFF** (`...`)
+
+No third naming mode is supported.
 
 ---
 
@@ -31,7 +33,7 @@ Relevant section of the `Menu[]` table (current state):
 New entry inserted between "Save As..." and the separator:
 
 ```cpp
-{ 1, N_("&SVG Layer Names..."), Command::SVG_LAYER_NAMES, 0, KN, mFile },
+{ 1, N_("&Export Layer Names..."), Command::SVG_LAYER_NAMES, 0, KN, mFile },
 ```
 
 The handler in `MenuFile()` (or its equivalent switch) navigates to the new screen:
@@ -80,13 +82,11 @@ case Screen::SVG_LAYER_NAMES: ShowSvgLayerNames(); break;
 `src/solvespace.h` — one new `bool` alongside the existing export flags:
 
 ```cpp
-bool     exportSvgBareLayerNames;   // true = new convention (bare name)
-                                    // false = old convention (s%03x-name)
+bool     exportLayerNamesWithStyleNumber; // true = style number ON
+                                         // false = style number OFF
 ```
 
-Default: `true` (new convention, for new installations).  Existing installations that
-have never set this key will also receive `true` on first run.  If backward-compat is
-preferred, default to `false` until the user explicitly opts in.
+Default can be either policy choice; recommended default is `false` (style number OFF).
 
 ---
 
@@ -97,7 +97,7 @@ preferred, default to `false` until the user explicitly opts in.
 Alongside the existing `ThawBool` calls:
 
 ```cpp
-exportSvgBareLayerNames = settings->ThawBool("ExportSvgBareLayerNames", true);
+exportLayerNamesWithStyleNumber = settings->ThawBool("ExportLayerNamesWithStyleNumber", false);
 ```
 
 ### Save (`SolveSpaceUI::Exit`, `src/solvespace.cpp`)
@@ -105,7 +105,7 @@ exportSvgBareLayerNames = settings->ThawBool("ExportSvgBareLayerNames", true);
 Alongside the existing `FreezeBool` calls:
 
 ```cpp
-settings->FreezeBool("ExportSvgBareLayerNames", exportSvgBareLayerNames);
+settings->FreezeBool("ExportLayerNamesWithStyleNumber", exportLayerNamesWithStyleNumber);
 ```
 
 The settings store is platform-native (registry on Windows, plist on macOS, INI-like file
@@ -121,25 +121,26 @@ large), following the exact pattern of `ShowTangentArc()`:
 
 ```cpp
 void TextWindow::ShowSvgLayerNames() {
-    Printf(true,  "%FtSVG LAYER NAMING CONVENTION%E");
+    Printf(true,  "%FtEXPORT LAYER NAMING CONVENTION%E");
 
-    Printf(true,  "%Ft layer name written to SVG <g> elements%E");
+    Printf(true,  "%Ft layer names written to DXF and SVG%E");
     Printf(false, "");
-    Printf(false, "  %Fd%f%LN%s  new convention — bare name%E",
+    Printf(false, "  %Fd%f%LN%s  style number OFF (new)%E",
         &ScreenChangeSvgLayerNames,
-        SS.exportSvgBareLayerNames ? RADIO_TRUE : RADIO_FALSE);
-    Printf(false, "%Ba   e.g.  chop   →  id=\"chop\"");
+        !SS.exportLayerNamesWithStyleNumber ? RADIO_TRUE : RADIO_FALSE);
+    Printf(false, "%Ba   e.g.  s100-chop   →  chop");
+    Printf(false, "%Ba         #def-inactive-group   →  _def_inactive_group");
     Printf(false, "");
-    Printf(false, "  %Fd%f%LO%s  old convention — handle-prefixed name%E",
+    Printf(false, "  %Fd%f%LO%s  style number ON (old)%E",
         &ScreenChangeSvgLayerNames,
-        !SS.exportSvgBareLayerNames ? RADIO_TRUE : RADIO_FALSE);
-    Printf(false, "%Bd   e.g.  chop   →  id=\"s100_chop\"");
+        SS.exportLayerNamesWithStyleNumber ? RADIO_TRUE : RADIO_FALSE);
+    Printf(false, "%Bd   e.g.  s100-chop   →  s100_chop");
+    Printf(false, "%Bd         #def-inactive-group   →  s002_def_inactive_group");
 
     Printf(false, "");
-    Printf(false, "The new convention produces stable layer names that");
-    Printf(false, "do not change when styles are reordered or renumbered.");
-    Printf(false, "Use it when a downstream consumer (plotter, script)");
-    Printf(false, "matches layer names by exact string.");
+    Printf(false, "Non-alphanumeric characters are always converted to '_'.");
+    Printf(false, "If style number OFF causes a collision, colliding names are");
+    Printf(false, "promoted to s???_<name> for manual resolution.");
 
     Printf(false, "");
     Printf(true,  "(or %Fl%Ll%fback to home screen%E)", &ScreenHome);
@@ -150,7 +151,7 @@ The link letters `'N'` and `'O'` (new / old) are passed to the callback via `%L`
 
 ```cpp
 void TextWindow::ScreenChangeSvgLayerNames(int link, uint32_t v) {
-    SS.exportSvgBareLayerNames = (link == 'N');
+    SS.exportLayerNamesWithStyleNumber = (link == 'O');
     SS.GW.Invalidate();
 }
 ```
@@ -172,31 +173,27 @@ in the `File` command group, near `SAVE_AS`.
 
 ---
 
-## `SvgLayerNameForStyle()` Integration
+## Name Integration (DXF + SVG)
 
-The flag is read at export time inside `SvgLayerNameForStyle()`:
+The flag is read at export time in shared naming logic used by both DXF and SVG:
 
 ```cpp
 static std::string SvgLayerNameForStyle(hStyle hs) {
     Style *s = Style::Get(hs);
 
-    if(SS.exportSvgBareLayerNames) {
-        // New convention: strip "#def-" sentinel, return bare name.
-        std::string name = s->name;
-        if(name.rfind("#def-", 0) == 0) name = name.substr(5);
-        if(!name.empty()) return name;
-        return ssprintf("s%x", hs.v);   // unnamed style fallback
-    } else {
-        // Old convention: full DescriptionString(), matching DXF layer name.
-        return s->DescriptionString();
+    std::string name = SanitizeStyleName(s->name); // non-alnum -> '_'
+
+    if(SS.exportLayerNamesWithStyleNumber) {
+        return ssprintf("s%03x_%s", hs.v, name.c_str());
     }
+
+    // Style number OFF by default.
+    // Collision handling upgrades colliding names to s???_<name>.
+    return ResolveCollisionOrBare(hs, name);
 }
 ```
 
-`SvgSystemFallbackLayerName()` and `SvgHasDefaultStyleNamePrefix()` are **deleted** in
-both paths — the old convention now delegates to `DescriptionString()` directly rather
-than maintaining a separate hardcoded table (which was also buggy; see
-`export-strategy-old-convention.md`).
+Any fixed-string translation helpers are deleted in both paths.
 
 ---
 
@@ -204,14 +201,14 @@ than maintaining a separate hardcoded table (which was also buggy; see
 
 | File | Addition |
 |---|---|
-| `src/solvespace.h` | `bool exportSvgBareLayerNames;` on `SolveSpaceUI` |
+| `src/solvespace.h` | `bool exportLayerNamesWithStyleNumber;` on `SolveSpaceUI` |
 | `src/ui.h` | `Screen::SVG_LAYER_NAMES = 10` |
 | `src/ui.h` | `static void ScreenChangeSvgLayerNames(int link, uint32_t v);` |
 | `src/ui.h` | `void ShowSvgLayerNames();` |
 | `src/graphicswin.cpp` | `Command::SVG_LAYER_NAMES` menu entry after `SAVE_AS` |
 | `src/graphicswin.cpp` | `case Command::SVG_LAYER_NAMES:` in `MenuFile()` switch |
-| `src/solvespace.cpp` | `ThawBool("ExportSvgBareLayerNames", true)` in `Init()` |
-| `src/solvespace.cpp` | `FreezeBool("ExportSvgBareLayerNames", ...)` in `Exit()` |
+| `src/solvespace.cpp` | `ThawBool("ExportLayerNamesWithStyleNumber", false)` in `Init()` |
+| `src/solvespace.cpp` | `FreezeBool("ExportLayerNamesWithStyleNumber", ...)` in `Exit()` |
 | `src/confscreen.cpp` | `ShowSvgLayerNames()` and `ScreenChangeSvgLayerNames()` |
-| `src/exportvector.cpp` | Updated `SvgLayerNameForStyle()`, delete two helper functions |
+| `src/exportvector.cpp` | Shared sanitized naming logic for DXF/SVG; delete fixed-string helpers |
 | `src/textwin.cpp` | `case Screen::SVG_LAYER_NAMES:` in `Show()` switch |

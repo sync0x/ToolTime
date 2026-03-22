@@ -1,103 +1,39 @@
-# SVG Export Layer Naming — Alignment with DXF Convention
+# Export Layer Naming — Old Convention (Style Number ON)
 
-## What DXF actually uses as layer names
+## Rule
 
-In `assignEntityDefaults` (`src/exportvector.cpp`):
-```cpp
-entity->layer = s->DescriptionString();
-```
+The old convention keeps style numbers in exported layer names for **both DXF and SVG**.
 
-And `DescriptionString()` (`src/style.cpp`) always produces:
-```
-s%03x-%s   →  e.g. "s001-#def-active-grp", "s003-#def-inactive-grp", "s100-chop"
-```
+Name construction:
 
-The `writeLayers()` override also emits two *unconditional* fixed-string layers — `"dimensions"` and `"text"` — for constraints; those are not style-derived at all.
+1. Start from the style's internal name.
+2. Replace every non-alphanumeric character with `_`.
+3. Prefix with `s%03d_` (style index, zero-padded to 3 digits).
+
+There is no hard-coded string translation table.
 
 ---
 
-## What the current SVG naming chain does instead
+## Examples
 
-```
-SvgLayerNameForStyle(hs)
- ├─ if name is set AND does NOT start with "#def-"  →  return name as-is  ("chop")
- ├─ else call SvgSystemFallbackLayerName(h.v):
- │    case 0  → "#references"
- │    case 1  → "active_group"       (h.v=1 = ACTIVE_GRP  ✓)
- │    case 2  → "inactive_group"     (h.v=2 = CONSTRUCTION ← BUG; INACTIVE_GRP is h.v=3)
- │    case 6  → "dimensions"         (h.v=6 = CONSTRAINT   ← BUG; DXF "dimensions" is hardcoded)
- │    default (h.v<0x100) → "system_s%x"
- └─ final fallback: name as-is, or "s%x"
-```
-
-The `#def-` prefix check exists solely so that system styles (whose `name` is `"#def-active-grp"`,
-`"#def-inactive-grp"`, etc.) are *not* emitted with those raw names — they are redirected to the
-hardcoded friendly strings above.
+| Source style | Style index | Exported DXF layer | Exported SVG layer |
+|---|---:|---|---|
+| `#def-active-group` | 001 | `s001_def_active_group` | `s001_def_active_group` |
+| `#def-inactive-group` | 002 | `s002_def_inactive_group` | `s002_def_inactive_group` |
+| `s100-chop` | 100 | `s100_chop` | `s100_chop` |
+| `s101-fold` | 101 | `s101_fold` | `s101_fold` |
 
 ---
 
-## What happens under the proposed alignment
+## Implications
 
-**`SvgLayerNameForStyle()` collapses to a single call:**
-
-```cpp
-static std::string SvgLayerNameForStyle(hStyle hs) {
-    return Style::Get(hs)->DescriptionString();
-}
-```
-
-Three bodies of logic become dead code and should be deleted:
-
-| Function | Fate |
-|---|---|
-| `SvgSystemFallbackLayerName()` | Entirely superseded — all its cases are now covered by `DescriptionString()` |
-| `SvgHasDefaultStyleNamePrefix()` | Entirely superseded — the `#def-` gate was only needed to redirect to the fallback |
-| The multi-branch body of `SvgLayerNameForStyle()` | Replaced by the one-liner above |
-
-`SvgLayerId()` stays unchanged — it still sanitises whatever string it receives.
+- Layer names are stable only while style indices remain stable.
+- This convention preserves index visibility for workflows that prefer explicit style handles.
+- Since translation-by-fixed-strings is removed, names are fully mechanical and predictable.
 
 ---
 
-## Name changes for the sub-`0x100` (system) styles
+## Removed legacy behavior
 
-| h.v | Symbol | Current SVG layer name | New SVG layer name (= DXF layer name) |
-|---|---|---|---|
-| 1 | `ACTIVE_GRP` | `active_group` | `s001-#def-active-grp` |
-| 2 | `CONSTRUCTION` | `inactive_group` ← **wrong handle** | `s002-#def-construction` |
-| 3 | `INACTIVE_GRP` | `system_s3` ← **never named correctly** | `s003-#def-inactive-grp` |
-| 4 | `DATUM` | `system_s4` | `s004-#def-datum` |
-| 5 | `SOLID_EDGE` | `system_s5` | `s005-#def-solid-edge` |
-| 6 | `CONSTRAINT` | `dimensions` ← **wrong meaning** | `s006-#def-constraint` |
-| 7–15 | … | `system_s%x` | `s00%x-#def-…` |
-
-The two bugs in `SvgSystemFallbackLayerName` — h.v=2 mapped to `"inactive_group"` and h.v=6
-mapped to `"dimensions"` — are silently corrected by removing the function entirely. Neither bug
-was visible in practice: `CONSTRUCTION` has `exportable=false` so it never appeared in exports,
-and `CONSTRAINT` entities in DXF go to the hardcoded `"dimensions"` layer via a separate path,
-not via `DescriptionString()`.
-
----
-
-## Effect on the `id` attribute
-
-`SvgLayerId()` collapses runs of non-alphanumeric characters to a single `_`, so:
-
-```
-"s001-#def-active-grp"    →  id="s001_def_active_grp"
-"s003-#def-inactive-grp"  →  id="s003_def_inactive_grp"
-"s100-chop"               →  id="s100_chop"
-```
-
-The `data-name` / `inkscape:label` attributes carry the exact DXF string with its dashes and
-`#def-` prefix intact.
-
----
-
-## Net summary
-
-Adopting `DescriptionString()` universally eliminates all special-case SVG naming logic below
-`FIRST_CUSTOM` (`0x100`). The current human-friendly SVG names (`active_group`, `inactive_group`)
-are replaced by their exact DXF counterparts (`s001-#def-active-grp`, `s003-#def-inactive-grp`).
-Custom styles gain the `s%03x-` handle prefix in SVG that they already have in DXF
-(`chop` → `s100-chop`). The only remaining naming code is `SvgLayerId()` for XML-safe `id`
-sanitisation.
+Any logic that maps specific system names to hand-written aliases (for example,
+`active-grp` → `active-group`) is out of scope in this convention and should be deleted.
