@@ -258,16 +258,8 @@ if(WIN32 OR APPLE OR EMSCRIPTEN)
             set_target_properties(zlibstatic PROPERTIES OUTPUT_NAME zlibstatic)
         endif()
 
-        # Prefer resolving vendored zlib to its produced archive path, to
-        # avoid passing a raw library token (e.g. "zlibstatic") to MinGW.
-        if(TARGET zlibstatic)
-            set(ZLIB_LIBRARY "$<TARGET_FILE:zlibstatic>")
-            if(WIN32 AND MINGW)
-                set(ZLIB_LIBRARY "$<TARGET_FILE:zlibstatic>" CACHE INTERNAL "" FORCE)
-            endif()
-        elseif(TARGET ZLIB::ZLIBSTATIC)
-            set(ZLIB_LIBRARY "$<TARGET_FILE:ZLIB::ZLIBSTATIC>")
-        endif()
+        # Keep link dependencies target-based so generated buildsystems keep
+        # proper target-level ordering; avoid file-path forcing here.
     else()
         find_package(ZLIB REQUIRED)
         if(NOT ZLIB_LIBRARY AND ZLIB_LIBRARIES)
@@ -299,7 +291,6 @@ if(WIN32 OR APPLE OR EMSCRIPTEN)
                 set_property(TARGET png_static PROPERTY
                     INTERFACE_LINK_LIBRARIES "${PNG_IFACE_LIBS}")
             endif()
-            set(PNG_LIBRARY "$<TARGET_FILE:png_static>" CACHE INTERNAL "" FORCE)
             unset(PNG_IFACE_LIBS)
         endif()
     else()
