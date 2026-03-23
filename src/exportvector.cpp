@@ -1128,9 +1128,10 @@ void SvgFileWriter::StartFile() {
     fprintf(f,
 "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.0//EN\" "
     "\"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd\">\r\n"
-"<svg xmlns=\"http://www.w3.org/2000/svg\"  "
+"<svg xmlns=\"http://www.w3.org/2000/svg\" "
     "xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\" "
     "xmlns:xlink=\"http://www.w3.org/1999/xlink\" "
+    "xmlns:i=\"http://ns.adobe.com/AdobeIllustrator/10.0/\" "
     "width='%.3fmm' height='%.3fmm' "
     "viewBox=\"0 0 %.3f %.3f\">\r\n"
 "\r\n"
@@ -1295,10 +1296,12 @@ void SvgFileWriter::FinishAndCloseFile() {
             hStyle hs = { hv };
             std::string layerName = SvgLayerNameForStyle(hs);
             std::string layerId = SvgLayerId(layerName, hv);
+            RgbaColor layerColor = Style::Color(hs, /*forExport=*/true);
 
             fprintf(f,
-                    "  <g id=\"%s\" data-name=\"%s\" inkscape:label=\"%s\" inkscape:groupmode=\"layer\">\r\n",
-                    layerId.c_str(), layerName.c_str(), layerName.c_str());
+                    "  <g id=\"%s\" data-name=\"%s\" inkscape:label=\"%s\" inkscape:groupmode=\"layer\" i:layer=\"yes\" color=\"#%02x%02x%02x\">\r\n",
+                    layerId.c_str(), layerName.c_str(), layerName.c_str(),
+                    layerColor.red, layerColor.green, layerColor.blue);
 
             fprintf(f, "%s", it->second.c_str());
             fprintf(f, "  </g>\r\n");
