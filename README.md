@@ -1,15 +1,17 @@
-# SolveSpace
+# ToolTime
 
 <img src="res/freedesktop/solvespace-scalable.svg" width="70" height="70" alt="SolveSpace Logo" align="left">
+
+This repository contains the source code of [ToolTime][], a fork of the SolveSpace parametric
+2D/3D Computer Aided Design software, with automation enhancements.
+
+[tooltime]: https://tooltime.frankencluster.right-to-bear-risc.com/
+
+## Original SolveSpace
 
 [![Build Status](https://github.com/solvespace/solvespace/workflows/CD/badge.svg)](https://github.com/solvespace/solvespace/actions)
 [![solvespace](https://snapcraft.io/solvespace/badge.svg)](https://snapcraft.io/solvespace)
 [![solvespace](https://snapcraft.io/solvespace/trending.svg?name=0)](https://snapcraft.io/solvespace)
-
-This repository contains the source code of [SolveSpace][], a parametric
-2d/3d CAD.
-
-[solvespace]: https://solvespace.com
 
 ## Community
 
