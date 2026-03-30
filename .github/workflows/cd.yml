@@ -20,6 +20,8 @@ jobs:
         access_token: ${{ github.token }}
 
   test_ubuntu:
+    # Disabled: compilation operations paused.
+    if: false
     needs: [cancel_previous_runs]
     runs-on: ubuntu-latest
     name: Test Ubuntu
@@ -31,6 +33,8 @@ jobs:
       run: .github/scripts/build-ubuntu.sh
 
   test_windows:
+    # Disabled: compilation operations paused.
+    if: false
     needs: [cancel_previous_runs]
     runs-on: windows-2019
     name: Test Windows
@@ -44,6 +48,8 @@ jobs:
       shell: bash
 
   test_macos:
+    # Disabled: compilation operations paused.
+    if: false
     needs: [cancel_previous_runs]
     runs-on: macos-latest
     name: Test macOS
@@ -55,6 +61,8 @@ jobs:
       run: .github/scripts/build-macos.sh debug arm64 && .github/scripts/build-macos.sh debug x86_64
 
   build_release_windows:
+    # Disabled: compilation operations paused.
+    if: false
     needs: [test_ubuntu, test_windows, test_macos]
     name: Build Release Windows
     runs-on: windows-2019
@@ -73,6 +81,8 @@ jobs:
           path: build/bin/RelWithDebInfo/solvespace.exe
 
   build_release_windows_openmp:
+    # Disabled: compilation operations paused.
+    if: false
     needs: [test_ubuntu, test_windows, test_macos]
     name: Build Release Windows (OpenMP)
     runs-on: windows-2019
@@ -91,6 +101,8 @@ jobs:
           path: build/bin/RelWithDebInfo/solvespace-openmp.exe
 
   build_release_macos:
+    # Disabled: compilation operations paused.
+    if: false
     needs: [test_ubuntu, test_windows, test_macos]
     name: Build Release macOS
     runs-on: macos-latest
@@ -115,6 +127,8 @@ jobs:
         path: build/bin/SolveSpace.dmg
 
   deploy_snap_amd64:
+    # Disabled: compilation operations paused.
+    if: false
     needs: [test_ubuntu, test_windows, test_macos]
     name: Deploy AMD64 Snap
     runs-on: ubuntu-latest
